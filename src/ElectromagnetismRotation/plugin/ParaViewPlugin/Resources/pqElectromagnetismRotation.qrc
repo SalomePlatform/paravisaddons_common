@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/ParaViewResources">
+        <file>Icons/pqCellData16.png</file>
+        <file>Icons/pqPointData16.png</file>
+    </qresource>
+</RCC>

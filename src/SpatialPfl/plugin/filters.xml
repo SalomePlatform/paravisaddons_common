@@ -1,0 +1,143 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy name="SpatialPfl"
+                 class="vtkSpatialPfl"
+                 label="Spatial Profile">
+      <InputProperty name="Input"
+                     command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input to the Level Scalars filter.
+        </Documentation>
+      </InputProperty>
+
+      <InputProperty command="SetSourceConnection"
+                     label="Source"
+                     name="Source"
+                     panel_visibility="default">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources" />
+        </ProxyGroupDomain>
+        <ProxyListDomain name="proxy_list">
+          <Proxy group="extended_sources"
+                 name="PolyLineSource" />
+        </ProxyListDomain>
+        <Documentation>The value of this property determines the points where probe will be done.</Documentation>
+      </InputProperty>
+
+      <IntVectorProperty name="ResampleInput"
+                         command="SetResampleInput"
+                         label="Subdivide Input Polyline"
+                         number_of_elements="1"
+                         default_values="0"
+                         panel_visibility="default">
+        <BooleanDomain name="bool" />
+          <Documentation>
+            If this entry is checked, the user can specify the level of
+            subdivision applied to each segment of the input polyline.
+          </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty name="NumberOfSamples"
+                         command="SetNumberOfSamples"
+                         label="Level of subdivision"
+                         number_of_elements="1"
+                         default_values="50"
+                         panel_visibility="default">
+          <IntRangeDomain name="range" min="1" max="100" />
+          <Hints>
+            <PropertyWidgetDecorator type="ShowWidgetDecorator">
+              <Property name="ResampleInput" function="boolean" />
+            </PropertyWidgetDecorator>
+          </Hints>
+          <Documentation>
+            The value of this property determines the level of subdivision
+            applied to each segment of the input polyline.
+          </Documentation>
+      </IntVectorProperty>
+
+      <Hints>
+        <ShowInMenu category="Hydraulics" />
+      </Hints>
+
+      <Hints>
+        <View type="XYChartView" />
+      </Hints>
+
+    </SourceProxy>
+
+    <SourceProxy name="SpatialPflWithSource"
+                  class="vtkSpatialPfl"
+                  label="Spatial Profile With Source">
+    <InputProperty name="Input" command="SetInputConnection">
+      <ProxyGroupDomain name="groups">
+        <Group name="sources"/>
+        <Group name="filters"/>
+      </ProxyGroupDomain>
+      <DataTypeDomain name="input_type">
+        <DataType value="vtkDataSet"/>
+      </DataTypeDomain>
+      <Documentation>
+        This property specifies the input to the Level Scalars filter.
+      </Documentation>
+    </InputProperty>
+
+    <InputProperty command="SetSourceConnection"
+                    label="Source"
+                    name="Source"
+                    panel_visibility="default">
+      <ProxyGroupDomain name="groups">
+        <Group name="sources" />
+      </ProxyGroupDomain>
+      <Documentation>The value of this property determines the points where probe will be done.</Documentation>
+    </InputProperty>
+
+    <IntVectorProperty name="ResampleInput"
+                        command="SetResampleInput"
+                        label="Subdivide Input Polyline"
+                        number_of_elements="1"
+                        default_values="0"
+                        panel_visibility="default">
+      <BooleanDomain name="bool" />
+        <Documentation>
+          If this entry is checked, the user can specify the level of
+          subdivision applied to each segment of the input polyline.
+        </Documentation>
+    </IntVectorProperty>
+
+    <IntVectorProperty name="NumberOfSamples"
+                        command="SetNumberOfSamples"
+                        label="Level of subdivision"
+                        number_of_elements="1"
+                        default_values="50"
+                        panel_visibility="default">
+        <IntRangeDomain name="range" min="1" max="100" />
+        <Hints>
+          <PropertyWidgetDecorator type="ShowWidgetDecorator">
+            <Property name="ResampleInput" function="boolean" />
+          </PropertyWidgetDecorator>
+        </Hints>
+        <Documentation>
+          The value of this property determines the level of subdivision
+          applied to each segment of the input polyline.
+        </Documentation>
+    </IntVectorProperty>
+
+    <Hints>
+      <ShowInMenu category="Hydraulics" />
+    </Hints>
+
+    <Hints>
+      <View type="XYChartView" />
+    </Hints>
+
+  </SourceProxy>
+
+  </ProxyGroup>
+</ServerManagerConfiguration>

@@ -1,0 +1,163 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy class="vtkElectromagnetismVecteur"
+                 name="Vecteur">
+      <InputProperty name="Input"
+                     command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkUnstructuredGrid"/>
+        </DataTypeDomain>
+
+        <InputArrayDomain name="vector_array"
+                          number_of_components="3"
+                          optional="1" />
+
+        <Documentation short_help= "Affiche les vecteurs sur champ aux cellules."
+                       long_help = "Affiche les vecteurs sur champ aux cellules.">
+        </Documentation>
+      </InputProperty>
+      <DoubleVectorProperty command="SetScaleFactor"
+                            default_values="1.0"
+                            name="ScaleFactor"
+                            number_of_elements="1"
+                            animateable="1"
+                            panel_visibility="default">
+        <BoundsDomain mode="scaled_extent" name="bounds" scale_factor="0.1">
+          <RequiredProperties>
+            <Property function="Input" name="Input" />
+          </RequiredProperties>
+        </BoundsDomain>
+        <ArrayRangeDomain name="scalar_range">
+          <RequiredProperties>
+            <Property function="Input" name="Input" />
+            <Property function="ArraySelection" name="ScaleArray" />
+          </RequiredProperties>
+        </ArrayRangeDomain>
+        <ArrayRangeDomain name="vector_range">
+          <RequiredProperties>
+            <Property function="Input" name="Input" />
+            <Property function="ArraySelection" name="OrientationArray" />
+          </RequiredProperties>
+        </ArrayRangeDomain>
+        <Documentation>This property specifies the scale factor applied to the length of arrow.
+        </Documentation>
+      </DoubleVectorProperty>
+
+      <IntVectorProperty command="SetGlyphMode"
+                         default_values="0"
+                         name="GlyphMode"
+                         number_of_elements="1"
+                         panel_visibility="default">
+        <EnumerationDomain name="enum">
+          <Entry text="All Points" value="0"/>
+          <Entry text="Every Nth Point" value="1"/>
+          <Entry text="Uniform Spatial Distribution (Bounds Based)" value="2"/>
+          <Entry text="Uniform Spatial Distribution (Surface Sampling)" value="3"/>
+          <Entry text="Uniform Spatial Distribution (Volume Sampling)" value="4"/>
+        </EnumerationDomain>
+        <Documentation>
+This property indicates the mode that will be used to generate
+glyphs from the dataset.
+        </Documentation>
+      </IntVectorProperty>
+      <IntVectorProperty command="SetMaximumNumberOfSamplePoints"
+                        number_of_elements="1"
+                        default_values="5000"
+                        name="MaximumNumberOfSamplePoints">
+        <IntRangeDomain min="1" name="range" />
+        <Documentation>
+This property specifies the maximum number of sample points to use
+when sampling the space when Uniform Spatial Distribution is used.
+        </Documentation>
+        <Hints>
+          <PropertyWidgetDecorator type="CompositeDecorator">
+            <Expression type="or">
+              <PropertyWidgetDecorator type="GenericDecorator" mode="visibility" property="GlyphMode" value="2" inverse="0" />
+              <PropertyWidgetDecorator type="GenericDecorator" mode="visibility" property="GlyphMode" value="3" inverse="0" />
+              <PropertyWidgetDecorator type="GenericDecorator" mode="visibility" property="GlyphMode" value="4" inverse="0" />
+            </Expression>
+          </PropertyWidgetDecorator>
+          <!-- show this widget when GlyphMode==2||3||4 -->
+        </Hints>
+      </IntVectorProperty>
+      <IntVectorProperty command="SetSeed"
+                        number_of_elements="1"
+                        default_values="10339"
+                        name="Seed">
+        <IntRangeDomain min="1" name="range"/>
+        <Documentation>
+This property specifies the seed that will be used for generating a
+uniform distribution of glyph points when a Uniform Spatial
+Distribution is used.
+        </Documentation>
+        <Hints>
+          <PropertyWidgetDecorator type="CompositeDecorator">
+            <Expression type="or">
+              <PropertyWidgetDecorator type="GenericDecorator" mode="visibility" property="GlyphMode" value="2" inverse="0" />
+              <PropertyWidgetDecorator type="GenericDecorator" mode="visibility" property="GlyphMode" value="3" inverse="0" />
+              <PropertyWidgetDecorator type="GenericDecorator" mode="visibility" property="GlyphMode" value="4" inverse="0" />
+            </Expression>
+          </PropertyWidgetDecorator>
+          <!-- show this widget when GlyphMode==2||3||4 -->
+        </Hints>
+      </IntVectorProperty>
+
+      <IntVectorProperty command="SetStride"
+                         number_of_elements="1"
+                         default_values="1"
+                         name="Stride">
+        <IntRangeDomain min="1" name="range"/>
+        <Documentation>
+This property specifies the stride that will be used when glyphing by
+Every Nth Point.
+        </Documentation>
+        <Hints>
+          <PropertyWidgetDecorator type="GenericDecorator"
+                                   mode="visibility"
+                                   property="GlyphMode"
+                                   value="1" />
+          <!-- show this widget when GlyphMode==1 -->
+        </Hints>
+     </IntVectorProperty>
+
+      <StringVectorProperty command="SetInputArrayToProcess"
+                            default_values="1"
+                            element_types="0 0 0 0 2"
+                            name="OrientationArray"
+                            number_of_elements="5">
+        <!-- default value=1 so normals go to the right place -->
+        <ArrayListDomain attribute_type="Vectors"
+                         input_domain_name="vector_array"
+                         name="array_list">
+          <RequiredProperties>
+            <Property function="Input"
+                      name="Input" />
+          </RequiredProperties>
+        </ArrayListDomain>
+        <Documentation>
+Select the input array to use for orienting the glyphs.
+        </Documentation>
+      </StringVectorProperty>
+      
+    <StringVectorProperty
+        name="ColorArrayName"
+        command="GetColorArrayName"
+        number_of_elements="1"
+        animateable="0"
+        information_only="1">
+        <Documentation>
+          This readonly property gives the name of array used to color the default active array for auto selection for Color in render view.
+        </Documentation>
+      </StringVectorProperty>
+
+      <Hints>
+        <RepresentationType view="RenderView" type="Wireframe"/>
+        <ShowInMenu category="Electromagnetism" />
+      </Hints>
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

@@ -1,0 +1,58 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy name="Flux Disc"
+                 class="vtkElectromagnetismFluxDisc">
+      <InputProperty name="Input"
+                     command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input to the Level Scalars filter.
+        </Documentation>
+      </InputProperty>
+      <ProxyProperty command="SetCutFunction"
+                     label="Slice Type"
+                     name="CutFunction">
+        <ProxyGroupDomain name="groups">
+          <Group name="implicit_functions" />
+        </ProxyGroupDomain>
+        <ProxyListDomain name="proxy_list">
+          <Proxy group="implicit_functions" name="Cylinder" />
+        </ProxyListDomain>
+        <Documentation>
+          This property sets the parameters of cylinder used for slice.
+        </Documentation>
+      </ProxyProperty>
+
+      <IntVectorProperty command="SetRadialResolution"
+                         default_values="8"
+                         name="RadialResolution"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <IntRangeDomain max="1024"
+                        min="3"
+                        name="range" />
+        <Documentation>Set the number of points in radial direction.</Documentation>
+      </IntVectorProperty>
+      <IntVectorProperty command="SetCircumferentialResolution"
+                         default_values="8"
+                         name="CircumferentialResolution"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <IntRangeDomain max="1024"
+                        min="3"
+                        name="range" />
+        <Documentation>Set the number of points in circumferential direction.</Documentation>
+      </IntVectorProperty>
+
+      <Hints>
+        <ShowInMenu category="Electromagnetism" />
+      </Hints>
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

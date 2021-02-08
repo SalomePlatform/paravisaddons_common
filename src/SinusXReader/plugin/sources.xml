@@ -1,0 +1,24 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="sources">
+    <SourceProxy class="vtkSinusXReader"
+                 name="SinusXReader">
+      <Documentation short_help="Read a Sinus X file."
+                     long_help="Read a Sinus X file into as a vtkUnstructuredGrid.">
+      </Documentation>
+      <StringVectorProperty number_of_elements="1"
+                            animateable="0"
+                            name="FileName"
+                            command="SetFileName">
+        <FileListDomain name="files" />
+        <Documentation>
+          This property specifies the file name for the Sinus X reader.
+        </Documentation>
+      </StringVectorProperty>
+
+      <Hints>
+        <ReaderFactory extensions="sx" file_description="Sinus X files (Plugin)" />
+      </Hints>
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>
+

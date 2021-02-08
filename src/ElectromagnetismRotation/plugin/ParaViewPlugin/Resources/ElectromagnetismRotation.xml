@@ -1,0 +1,75 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy name="RotationOfGroup" class="vtkElectromagnetismRotation" label="Rotation Of Group">
+     <InputProperty name="Input" command="SetInputConnection">
+       <ProxyGroupDomain name="groups">
+         <Group name="sources"/>
+         <Group name="filters"/>
+       </ProxyGroupDomain>
+       <DataTypeDomain name="input_type">
+         <DataType value="vtkDataSet"/>
+       </DataTypeDomain>
+       <Documentation>
+         This property specifies the input to the Level Scalars filter.
+       </Documentation>
+     </InputProperty>
+
+     <StringVectorProperty name="GroupsFlagsInfo" information_only="1">
+       <ArraySelectionInformationHelper attribute_name="GroupsFlags" />
+     </StringVectorProperty>
+
+     <StringVectorProperty name="GroupsFlagsStatus" command="SetGroupsFlagsStatus"
+                           label="All Groups"
+                           number_of_elements="0"
+                           repeat_command="1"
+                           number_of_elements_per_command="2"
+                           element_types="2 0"
+                           information_property="GroupsFlagsInfo"
+                           panel_widget="ElectroRotationGroupWidgetType">
+       <ArraySelectionDomain name="array_list">
+         <RequiredProperties>
+           <Property name="GroupsFlagsInfo" function="ArrayList" />
+         </RequiredProperties>
+       </ArraySelectionDomain>
+       <Documentation>
+          This property lists all groups and families to select.
+       </Documentation>
+     </StringVectorProperty>
+
+      <IntVectorProperty command="SetAxis" default_values="2" name="Axis" number_of_elements="1">
+        <EnumerationDomain name="enum">
+          <Entry text="X" value="0" />
+          <Entry text="Y" value="1" />
+          <Entry text="Z" value="2" />
+        </EnumerationDomain>
+        <Documentation>This property determines the axis (X, Y or Z) along which rotation is performed.</Documentation>
+      </IntVectorProperty>
+
+      <StringVectorProperty command="SetAngularStep"
+                            default_values="36"
+                            label="Angular Step"
+                            name="AngularStep"
+                            number_of_elements="1">
+        <Documentation>Pas angulaire en degre</Documentation>
+      </StringVectorProperty>
+
+      <StringVectorProperty
+          name="MeshName"
+          command="GetMeshName"
+          number_of_elements="1"
+          animateable="0"
+          information_only="1">
+        <Documentation>
+          This property returns the name of the mesh.
+        </Documentation>
+      </StringVectorProperty>
+
+      <Hints>
+        <ShowInMenu category="Electromagnetism" />
+      </Hints>
+    
+
+    </SourceProxy>
+
+  </ProxyGroup>
+</ServerManagerConfiguration>

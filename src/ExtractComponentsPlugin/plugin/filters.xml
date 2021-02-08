@@ -1,0 +1,80 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <!-- ==================================================================== -->
+     <SourceProxy class="vtkExtractComponents"
+                 name="ExtractComponents"
+                 label="Extract Components">
+      <Documentation long_help="This filter extracts some components of a multi-component attribute array."
+                     short_help="Extract Multiple Component."/>
+      <InputProperty command="SetInputConnection"
+                     name="Input">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources" />
+          <Group name="filters" />
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet" />
+        </DataTypeDomain>
+        <InputArrayDomain name="input_array"
+                          attribute_type="any">
+        </InputArrayDomain>
+        <Documentation>
+          This property specifies the input of the Extract Component filter.
+        </Documentation>
+      </InputProperty>
+      <StringVectorProperty name="SelectInputArray"
+                            label="Input Array"
+                            command="SetInputArrayToProcess"
+                            element_types="0 0 0 0 2"
+                            number_of_elements="5">
+        <ArrayListDomain name="array_list"
+                         input_domain_name="input_array_any">
+          <RequiredProperties>
+            <Property function="Input"
+                      name="Input" />
+          </RequiredProperties>
+        </ArrayListDomain>
+        <Documentation>
+          This property indicates the name of the array to be extracted.
+        </Documentation>
+      </StringVectorProperty>
+      <StringVectorProperty name="OutputArrayName"
+                            label="Output Array Name"
+                            command="SetOutputArrayName"
+                            default_values=""
+                            number_of_elements="1"
+                            panel_widget="LinkedLineEdit">
+        <Documentation>
+          This property indicates the name of the output scalar array.
+        </Documentation>
+      </StringVectorProperty>
+      <IntVectorProperty name="Components"
+                         animateable="0"
+                         clean_command="ClearComponents"
+                         command="AddComponent"
+                         number_of_elements_per_command="1"
+                         repeat_command="1">
+        <MyNumberOfComponentsDomain name="comps">
+          <RequiredProperties>
+            <Property function="Input"
+                      name="Input" />
+            <Property function="ArraySelection"
+                      name="SelectInputArray" />
+          </RequiredProperties>
+        </MyNumberOfComponentsDomain>
+        <Documentation>
+          This property indicates the components of the array to be extracted.
+        </Documentation>
+      </IntVectorProperty>
+      <IntVectorProperty command="SetGenerateVector"
+                         default_values="0"
+                         name="GenerateVector"
+                         number_of_elements="1">
+        <BooleanDomain name="bool" />
+        <Documentation>Specify if output array is clamped/ to 3 components array in order to be connected downstream to WrapByVector filter for example. Disabled by default.</Documentation>
+      </IntVectorProperty>
+      <!-- End ExtractComponents -->
+    </SourceProxy>
+
+  </ProxyGroup>
+</ServerManagerConfiguration>

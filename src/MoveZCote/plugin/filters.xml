@@ -1,0 +1,24 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy name="MoveZCote"
+                 class="vtkMoveZCote"
+                 label="Move Z Cote">
+      <InputProperty name="Input"
+                     command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkUnstructuredGrid"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input to the Level Scalars filter.
+        </Documentation>
+      </InputProperty>
+      <Hints>
+        <ShowInMenu category="Hydraulics" />
+      </Hints>
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

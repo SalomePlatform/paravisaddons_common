@@ -1,0 +1,64 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy class="vtkGlyphCIH"
+                 name="Glyph Tangent">
+      <InputProperty name="Input"
+                     command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet"/>
+        </DataTypeDomain>
+        <Documentation short_help= "Affiche des fleches a epaisseur constante."
+                       long_help = "Affiche des fleches a epaisseur constante.">
+        </Documentation>
+      </InputProperty>
+      <DoubleVectorProperty command="SetScaleFactor"
+                            default_values="1"
+                            name="ScaleFactor"
+                            number_of_elements="1"
+                            animateable="1"
+                            panel_visibility="default">
+        <Documentation>This property specifies the scale factor applied to the length of arrows.
+        </Documentation>
+      </DoubleVectorProperty>
+      <DoubleVectorProperty command="SetWidthFactor"
+                            default_values="1"
+                            name="WidthFactor"
+                            number_of_elements="1"
+                            animateable="1"
+                            panel_visibility="default">
+        <DoubleRangeDomain min="0.1" max="10.0" name="range" />
+        <Documentation>This property specifies the width of arrows.
+        </Documentation>
+      </DoubleVectorProperty>
+
+      <StringVectorProperty command="SetInputArrayToProcess"
+                           default_values="0;0;0;3"
+                           default_values_delimiter=";"
+                           element_types="0 0 0 0 2"
+                           name="Mode Array Selection"
+                           number_of_elements="5">
+        <!-- default value=1 so normals go to the right place -->
+        <ArrayListDomain attribute_type="Vectors"
+                         input_domain_name="input_array2"
+                         name="array_list">
+          <RequiredProperties>
+            <Property function="Input"
+                      name="Input" />
+          </RequiredProperties>
+        </ArrayListDomain>
+        <Documentation>
+          Select the array that represents the requested mode.
+        </Documentation>
+      </StringVectorProperty>
+
+      <Hints>
+        <RepresentationType view="RenderView" type="Surface"/>
+        <ShowInMenu category="Mechanics" />
+      </Hints>
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

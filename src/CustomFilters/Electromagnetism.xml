@@ -1,0 +1,59 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+
+    <SourceProxy name="MyClip" label="Clip"
+                class="vtkPVMetaClipDataSet"
+                base_proxygroup="filters"
+                base_proxyname="Clip">
+     <Hints>
+       <ShowInMenu category="Electromagnetism" icon=":/pqWidgets/Icons/pqClip.svg"/>
+     </Hints>
+   </SourceProxy>
+
+   <SourceProxy name="MyProbeLocation" label="Probe Location"
+                class="vtkPProbeFilter"
+                base_proxygroup="filters"
+                base_proxyname="ProbePoint">
+     <Hints>
+       <ShowInMenu category="Electromagnetism"/>
+     </Hints>
+   </SourceProxy>
+   
+   <SourceProxy name="MyDataSetSurfaceFilter" label="Extract Surface"
+                class="vtkTubeFilter"
+                base_proxygroup="filters"
+                base_proxyname="DataSetSurfaceFilter">
+     <Hints>
+       <ShowInMenu category="Electromagnetism"/>
+     </Hints>
+   </SourceProxy>
+
+    <SourceProxy name="MyTubeFilter" label="Tube"
+                class="vtkDataSetSurfaceFilter"
+                base_proxygroup="filters"
+                base_proxyname="TubeFilter">
+     <Hints>
+       <ShowInMenu category="Electromagnetism"/>
+     </Hints>
+   </SourceProxy>
+   
+  <SourceProxy name="MyCut" label="Slice"
+                class="vtkPVMetaSliceDataSet"
+                base_proxygroup="filters"
+                base_proxyname="Cut">
+     <Hints>
+       <ShowInMenu category="Electromagnetism"/>
+     </Hints>
+   </SourceProxy>
+   
+   <SourceProxy name="MyCellDataToPointData" label="Cell Data to Point Data"
+                class="vtkPCellDataToPointData"
+                base_proxygroup="filters"
+                base_proxyname="CellDataToPointData">
+     <Hints>
+       <ShowInMenu category="Electromagnetism"/>
+     </Hints>
+   </SourceProxy>
+
+ </ProxyGroup>
+</ServerManagerConfiguration>

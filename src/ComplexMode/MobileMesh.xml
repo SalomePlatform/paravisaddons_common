@@ -1,0 +1,93 @@
+<CustomFilterDefinitions>
+  <CustomProxyDefinition name="MobileMesh" group="filters">
+    <CompoundSourceProxy id="4863" servers="1">
+      <Proxy group="filters" type="Calculator" id="4401" servers="1" compound_name="Calculator1">
+        <Property name="AttributeMode" id="4401.AttributeMode" number_of_elements="1">
+          <Element index="0" value="1"/>
+          <Domain name="enum" id="4401.AttributeMode.enum">
+            <Entry value="1" text="Point Data"/>
+            <Entry value="2" text="Cell Data"/>
+          </Domain>
+        </Property>
+        <Property name="CoordinateResults" id="4401.CoordinateResults" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="4401.CoordinateResults.bool"/>
+        </Property>
+        <Property name="Function" id="4401.Function" number_of_elements="1">
+          <Element index="0" value="COTE Z-coordsZ"/>
+        </Property>
+        <Property name="Input" id="4401.Input" number_of_elements="1">
+          <Domain name="groups" id="4401.Input.groups"/>
+          <Domain name="input_array" id="4401.Input.input_array"/>
+          <Domain name="input_type" id="4401.Input.input_type"/>
+        </Property>
+        <Property name="ReplaceInvalidValues" id="4401.ReplaceInvalidValues" number_of_elements="1">
+          <Element index="0" value="1"/>
+          <Domain name="bool" id="4401.ReplaceInvalidValues.bool"/>
+        </Property>
+        <Property name="ReplacementValue" id="4401.ReplacementValue" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="range" id="4401.ReplacementValue.range"/>
+        </Property>
+        <Property name="ResultArrayName" id="4401.ResultArrayName" number_of_elements="1">
+          <Element index="0" value="DisplacementsZ"/>
+        </Property>
+        <Property name="ResultNormals" id="4401.ResultNormals" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="4401.ResultNormals.bool"/>
+        </Property>
+        <Property name="ResultTCoords" id="4401.ResultTCoords" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="4401.ResultTCoords.bool"/>
+        </Property>
+      </Proxy>
+      <Proxy group="filters" type="WarpScalar" id="4636" servers="1" compound_name="WarpByScalar1">
+        <Property name="Input" id="4636.Input" number_of_elements="1">
+          <Proxy value="4401" output_port="0"/>
+          <Domain name="groups" id="4636.Input.groups"/>
+          <Domain name="input_array" id="4636.Input.input_array"/>
+          <Domain name="input_type" id="4636.Input.input_type"/>
+        </Property>
+        <Property name="Normal" id="4636.Normal" number_of_elements="3">
+          <Element index="0" value="0"/>
+          <Element index="1" value="0"/>
+          <Element index="2" value="1"/>
+          <Domain name="range" id="4636.Normal.range"/>
+        </Property>
+        <Property name="ScaleFactor" id="4636.ScaleFactor" number_of_elements="1">
+          <Element index="0" value="1"/>
+          <Domain name="range" id="4636.ScaleFactor.range"/>
+        </Property>
+        <Property name="SelectInputScalars" id="4636.SelectInputScalars" number_of_elements="5">
+          <Element index="0" value=""/>
+          <Element index="1" value=""/>
+          <Element index="2" value=""/>
+          <Element index="3" value="0"/>
+          <Element index="4" value="DisplacementsZ"/>
+          <Domain name="array_list" id="4636.SelectInputScalars.array_list">
+            <String text="COTE Z"/>
+            <String text="DisplacementsZ"/>
+            <String text="VITESSE U"/>
+            <String text="VITESSE V"/>
+            <String text="VITESSE W"/>
+          </Domain>
+        </Property>
+        <Property name="UseNormal" id="4636.UseNormal" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="4636.UseNormal.bool"/>
+        </Property>
+        <Property name="XYPlane" id="4636.XYPlane" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="4636.XYPlane.bool"/>
+        </Property>
+      </Proxy>
+      <ExposedProperties>
+        <Property name="Input" proxy_name="Calculator1" exposed_name="Input"/>
+      </ExposedProperties>
+      <OutputPort name="Output" proxy="WarpByScalar1" port_index="0"/>
+      <Hints>
+        <ShowInMenu/>
+      </Hints>
+    </CompoundSourceProxy>
+  </CustomProxyDefinition>
+</CustomFilterDefinitions>

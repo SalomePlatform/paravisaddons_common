@@ -1,0 +1,99 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy name="RateOfFlowThroughSection"
+                 class="vtkRateOfFlowThroughSection"
+                 label="Rate Of Flow Through Section">
+
+      <InputProperty name="Input"
+                     command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input to the Level Scalars filter.
+        </Documentation>
+      </InputProperty>
+
+      <InputProperty command="SetSourceConnection" label="Source" name="Source" panel_visibility="default">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources" />
+        </ProxyGroupDomain>
+        <Documentation>
+          The value of this property determines a polyline through which the rate of flow will be computed.
+        </Documentation>
+      </InputProperty>
+
+      <Hints>
+        <ShowInMenu category="Hydraulics" />
+      </Hints>
+
+      <Hints>
+        <View type="XYChartView" />
+      </Hints>
+    </SourceProxy>
+
+    <SourceProxy class="vtkExplodePolyLine" name="Explode PolyLine">
+    <InputProperty name="Input" command="SetInputConnection">
+      <ProxyGroupDomain name="groups">
+        <Group name="sources"/>
+        <Group name="filters"/>
+      </ProxyGroupDomain>
+      <DataTypeDomain name="input_type">
+        <DataType value="vtkDataSet"/>
+      </DataTypeDomain>
+      <Documentation short_help= "Explose les polylines en lines" 
+                    long_help = "Explose les polylines en lines">
+      </Documentation>
+    </InputProperty>
+    <Hints>
+      <RepresentationType view="RenderView" type="Surface"/>
+      <ShowInMenu category="Hydraulics" />
+    </Hints>
+  </SourceProxy>
+
+  <SourceProxy name="SedimentDeposit"
+              class="vtkSedimentDeposit"
+              label="Sediment Deposit">
+  <InputProperty name="Input"
+                command="SetInputConnection">
+    <ProxyGroupDomain name="groups">
+      <Group name="sources"/>
+      <Group name="filters"/>
+    </ProxyGroupDomain>
+    <DataTypeDomain name="input_type">
+      <DataType value="vtkDataSet"/>
+    </DataTypeDomain>
+    <Documentation>
+      This property specifies the input to the Level Scalars filter.
+    </Documentation>
+  </InputProperty>
+
+  <InputProperty command="SetSourceConnection"
+                label="Source"
+                name="Source"
+                panel_visibility="default">
+    <ProxyGroupDomain name="groups">
+      <Group name="sources" />
+    </ProxyGroupDomain>
+    <Documentation>
+      The value of this property determines a closed polyline inside which the deposite will be computed.
+    </Documentation>
+  </InputProperty>
+
+  <Hints>
+    <ShowInMenu category="Hydraulics" />
+  </Hints>
+
+  <Hints>
+    <View type="XYChartView" />
+  </Hints>
+
+</SourceProxy>
+
+
+  </ProxyGroup>
+</ServerManagerConfiguration>

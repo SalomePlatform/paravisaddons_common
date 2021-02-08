@@ -1,0 +1,105 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <CompoundSourceProxy name="PAPBComputation" label="PA PB Computation" id="26994" servers="1">
+      <Proxy group="filters" type="ExtractThreeDim" id="8310" servers="1" compound_name="ExtractThreeDim1">
+        <Property name="Input" id="8310.Input" number_of_elements="1">
+          <Domain name="groups" id="8310.Input.groups"/>
+          <Domain name="input_type" id="8310.Input.input_type"/>
+        </Property>
+      </Proxy>
+      <Proxy group="filters" type="ProbeLine" id="14588" servers="1" compound_name="PlotOverLine1">
+        <Property name="ComputeTolerance" id="14588.ComputeTolerance" number_of_elements="1">
+          <Element index="0" value="1"/>
+          <Domain name="bool" id="14588.ComputeTolerance.bool"/>
+        </Property>
+        <Property name="Input" id="14588.Input" number_of_elements="1">
+	  <Proxy value="8310" output_port="0"/>
+          <Domain name="groups" id="14588.Input.groups"/>
+          <Domain name="input_array" id="14588.Input.input_array"/>
+          <Domain name="input_type" id="14588.Input.input_type"/>
+        </Property>
+        <Property name="PassPartialArrays" id="14588.PassPartialArrays" number_of_elements="1">
+          <Element index="0" value="1"/>
+          <Domain name="bool" id="14588.PassPartialArrays.bool"/>
+        </Property>
+        <Property name="Source" id="14588.Source" number_of_elements="1">
+          <Proxy value="14555" output_port="0"/>
+          <Domain name="groups" id="14588.Source.groups"/>
+          <Domain name="proxy_list" id="14588.Source.proxy_list">
+            <Proxy value="14555"/>
+          </Domain>
+        </Property>
+        <Property name="Tolerance" id="14588.Tolerance" number_of_elements="1">
+          <Element index="0" value="2.220446049250313e-16"/>
+          <Domain name="range" id="14588.Tolerance.range"/>
+        </Property>
+      </Proxy>
+      <Proxy group="filters" type="ProgrammableFilter" id="14610" servers="1" compound_name="ProgrammableFilter1">
+        <Property name="CopyArrays" id="14610.CopyArrays" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="14610.CopyArrays.bool"/>
+        </Property>
+        <Property name="InformationScript" id="14610.InformationScript" number_of_elements="1">
+          <Element index="0" value=""/>
+        </Property>
+        <Property name="Input" id="14610.Input" number_of_elements="1">
+          <Proxy value="14588" output_port="0"/>
+          <Domain name="groups" id="14610.Input.groups"/>
+          <Domain name="input_type" id="14610.Input.input_type"/>
+        </Property>
+        <Property name="OutputDataSetType" id="14610.OutputDataSetType" number_of_elements="1">
+          <Element index="0" value="19"/>
+          <Domain name="enum" id="14610.OutputDataSetType.enum">
+            <Entry value="8" text="Same as Input"/>
+            <Entry value="0" text="vtkPolyData"/>
+            <Entry value="2" text="vtkStructuredGrid"/>
+            <Entry value="3" text="vtkRectilinearGrid"/>
+            <Entry value="4" text="vtkUnstructuredGrid"/>
+            <Entry value="6" text="vtkImageData"/>
+            <Entry value="10" text="vtkUniformGrid"/>
+            <Entry value="13" text="vtkMultiblockDataSet"/>
+            <Entry value="15" text="vtkHierarchicalBoxDataSet"/>
+            <Entry value="19" text="vtkTable"/>
+            <Entry value="33" text="vtkMolecule"/>
+          </Domain>
+        </Property>
+        <Property name="PythonPath" id="14610.PythonPath" number_of_elements="1">
+          <Element index="0" value=""/>
+        </Property>
+        <Property name="Script" id="14610.Script" number_of_elements="1">
+          <Element index="0" value="import numpy as np&#xa;import vtk&#xa;from vtk.numpy_interface import dataset_adapter as da&#xa;&#xa;####REPERE LOCAL&#xa;&#xa;##deux extremites de la ligne de coupe&#xa;&#xa;P0 = inputs[0].GetPoint(0)&#xa;P1 = inputs[0].GetPoint(inputs[0].GetNumberOfPoints() - 1)&#xa;&#xa;R = np.array([[P0[0]-P1[0], P0[1]-P1[1],  P0[2]-P1[2]]])&#xa;R=  R/np.linalg.norm(R)&#xa;&#xa;###vecteur normal au plan&#xa;L = np.array([[1,-1,0]])&#xa;L = L/np.linalg.norm(L)&#xa;&#xa;##complete le triedre&#xa;C = np.cross(R,L)&#xa;&#xa;##matrice de passage&#xa;BBp = np.concatenate((R,L,C), axis=0).T&#xa;&#xa;&#xa;M=np.eye(3,3)&#xa;B=np.eye(3,3)&#xa;&#xa;siefNoeu = np.array(inputs[0].GetPointData().GetAbstractArray(&#x27;RESU____SIEF_NOEU&#x27;))&#xa;arr0 = siefNoeu[:,0]&#xa;arr1 = siefNoeu[:,1]&#xa;arr2 = siefNoeu[:,2]&#xa;arr3 = siefNoeu[:,3]&#xa;arr4 = siefNoeu[:,4]&#xa;arr5 = siefNoeu[:,5]&#xa;&#xa;arcLength = np.array(inputs[0].GetPointData().GetAbstractArray(&#x27;arc_length&#x27;))&#xa;&#xa;##remove nans&#xa;nans = numpy.isnan(arr0)&#xa;arr0 = arr0[numpy.logical_not(nans)]&#xa;arr1 = arr1[numpy.logical_not(nans)]&#xa;arr2 = arr2[numpy.logical_not(nans)]&#xa;arr3 = arr3[numpy.logical_not(nans)]&#xa;arr4 = arr4[numpy.logical_not(nans)]&#xa;arr5 = arr5[numpy.logical_not(nans)]&#xa;arcLength = arcLength[numpy.logical_not(nans)]&#xa;&#xa;for i in range(size(arr0)):&#xa;                S=np.eye(3,3)&#xa;                S[0][0] = arr0[i]&#xa;                S[0][1] = arr3[i]&#xa;                S[0][2] = arr4[i]&#xa;                S[1][0] = S[0][1]&#xa;                S[1][1] = arr1[i]&#xa;                S[1][2] = arr5[i]&#xa;                S[2][0] = S[0][2]&#xa;                S[2][1] = S[1][2]&#xa;                S[2][2] = arr2[i]&#xa;                Sp = np.linalg.inv(BBp).dot(S).dot(BBp)&#xa;                arr0[i] = Sp[0][0]&#xa;                arr3[i] = Sp[0][1] &#xa;                arr4[i] = Sp[0][2]&#xa;                arr1[i] = Sp[1][1]&#xa;                arr5[i] = Sp[1][2]&#xa;                arr2[i] = Sp[2][2]&#xa;                &#xa;M=np.eye(3,3)&#xa;M[0][0] = np.mean(arr0)&#xa;M[0][1] = np.mean(arr3)&#xa;M[0][2] = np.mean(arr4)&#xa;M[1][0] = M[0][1]&#xa;M[1][1] = np.mean(arr1)&#xa;M[1][2] = np.mean(arr5)&#xa;M[2][0] = M[0][2]&#xa;M[2][1] = M[1][2]&#xa;M[2][2] = np.mean(arr2)&#xa;&#xa;w_m, v_m = np.linalg.eig(M)&#xa;&#xa;PM = np.maximum(np.abs(w_m[0]-w_m[1]),np.abs(w_m[2]-w_m[1]))&#xa;PM = np.maximum(PM,np.abs(w_m[0]-w_m[2]))&#xa;print(&#x22;PM :&#x22;, PM)&#xa;&#xa;B=np.eye(3,3)&#xa;&#xa;X = arcLength - min(arcLength)&#xa;&#xa;&#xa;DELTA = max(X) - min(X)&#xa;&#xa;B[0][0] = 6*np.trapz(-(X-DELTA/2)*arr0,x=X)/(DELTA**2)&#xa;B[0][1] = 6*np.trapz(-(X-DELTA/2)*arr3,x=X)/(DELTA**2)&#xa;B[0][2] = 6*np.trapz(-(X-DELTA/2)*arr4,x=X)/(DELTA**2)&#xa;B[1][0] = B[0][1]&#xa;B[1][1] = 6*np.trapz(-(X-DELTA/2)*arr1,x=X)/(DELTA**2)&#xa;B[1][2] = 6*np.trapz(-(X-DELTA/2)*arr5,x=X)/(DELTA**2)&#xa;B[2][0] = B[0][2]&#xa;B[2][1] = B[1][2]&#xa;B[2][2] = 6*np.trapz(-(X-DELTA/2)*arr2,x=X)/(DELTA**2)&#xa;&#xa; &#xa;w_b, v_b = np.linalg.eig(B)&#xa;&#xa;PB = np.maximum(np.abs(w_b[0]-w_b[1]),np.abs(w_b[2]-w_b[1]))&#xa;PB = np.maximum(PB,np.abs(w_b[0]-w_b[2]))&#xa;print(&#x22;PB :&#x22;, PB)&#xa;MB = M + B&#xa;w_mb, v_mb = np.linalg.eig(MB)&#xa;&#xa;PMB = np.maximum(np.abs(w_mb[0]-w_mb[1]),np.abs(w_mb[2]-w_mb[1]))&#xa;PMB = np.maximum(PMB,np.abs(w_mb[0]-w_mb[2]))&#xa;print(&#x22;PMB :&#x22;, PMB)&#xa;&#xa;&#xa;MB_ = M - B&#xa;&#xa;w_mb_, v_mb_ = np.linalg.eig(MB_)&#xa;&#xa;PMB_ = np.maximum(np.abs(w_mb_[0]-w_mb_[1]),np.abs(w_mb_[2]-w_mb_[1]))&#xa;PMB_ = np.maximum(PMB_,np.abs(w_mb_[0]-w_mb_[2]))&#xa;print(&#x22;PMB_ :&#x22;, PMB_)&#xa;&#xa;&#xa;ca = vtk.vtkDoubleArray()&#xa;cas = vtk.vtkStringArray()&#xa;ca.SetName(&#x22;Results&#x22;)&#xa;cas.SetName(&#x22;Names&#x22;)&#xa;ca.SetNumberOfComponents(1)&#xa;cas.SetNumberOfComponents(1)&#xa;ca.SetNumberOfTuples(4)&#xa;cas.SetNumberOfTuples(4)&#xa;ca.SetValue(0, PM)&#xa;ca.SetValue(1, PB)&#xa;ca.SetValue(2, PMB)&#xa;ca.SetValue(3, PMB_)&#xa;cas.SetValue(0, &#x22;PM&#x22;)&#xa;cas.SetValue(1, &#x22;PB&#x22;)&#xa;cas.SetValue(2, &#x22;PMB&#x22;)&#xa;cas.SetValue(3, &#x22;PMB_&#x22;)&#xa;output.AddColumn(cas)&#xa;output.AddColumn(ca)&#xa;&#xa;"/>
+        </Property>
+        <Property name="TimestepValues" id="14610.TimestepValues"/>
+        <Property name="UpdateExtentScript" id="14610.UpdateExtentScript" number_of_elements="1">
+          <Element index="0" value=""/>
+        </Property>
+      </Proxy>
+      <Proxy group="extended_sources" type="HighResLineSource" id="14555" servers="1" compound_name="auto_14555">
+        <Property name="Point1" id="14555.Point1" number_of_elements="3">
+          <Element index="0" value="0"/>
+          <Element index="1" value="256"/>
+          <Element index="2" value="238"/>
+          <Domain name="range" id="14555.Point1.range"/>
+        </Property>
+        <Property name="Point2" id="14555.Point2" number_of_elements="3">
+          <Element index="0" value="0"/>
+          <Element index="1" value="250"/>
+          <Element index="2" value="234"/>
+          <Domain name="range" id="14555.Point2.range"/>
+        </Property>
+        <Property name="Resolution" id="14555.Resolution" number_of_elements="1">
+          <Element index="0" value="50"/>
+          <Domain name="range" id="14555.Resolution.range"/>
+        </Property>
+      </Proxy>
+      <ExposedProperties>
+        <Property name="Input" proxy_name="ExtractThreeDim1" exposed_name="Input"/>
+        <Property name="Source" proxy_name="PlotOverLine1" exposed_name="Probe Type"/>
+      </ExposedProperties>
+      <OutputPort name="Output" proxy="ProgrammableFilter1" port_index="0"/>
+      <Hints>
+        <ShowInMenu/>
+      </Hints>
+    </CompoundSourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

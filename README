@@ -1,0 +1,59 @@
+**************************
+About SALOME PARAVISADDONS
+**************************
+
+=======
+License
+=======
+
+
+============
+Installation
+============
+
+--------------
+Pre-requisites
+--------------
+
+------------------
+Basic Installation
+------------------
+
+The build procedure of the SALOME platform is implemented with CMake.
+In order to build the module you have to do the following actions: 
+
+1. Set up environment for pre-requisites (see "Pre-requisites" section above).
+
+2. Create a build directory:
+
+   % mkdir PARAVISADDONS_BUILD
+
+3. Configure the build procedure:
+
+   % cd PARAVISADDONS_BUILD
+   % cmake -DCMAKE_BUILD_TYPE=<mode> -DCMAKE_INSTALL_PREFIX=<installation_directory> <path_to_src_dir>
+
+   where
+   - <mode> is either Release or Debug (default: Release);
+   - <installation_directory> is a destination folder to install SALOME PARAVISADDONS
+      module (default: /usr); 
+   - <path_to_src_dir> is a path to the PARAVISADDONS sources directory.
+
+
+4. Build and install:
+
+   % make
+   % make install
+
+   This will install SALOME PARAVISADDONS module to the <installation_directory>
+   specified to cmake command on the previous step.
+
+=============
+Documentation
+=============
+
+===============
+Troubleshooting
+===============
+
+Please, send a mail to webmaster.salome@opencascade.com.

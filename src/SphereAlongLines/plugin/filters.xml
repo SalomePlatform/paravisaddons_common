@@ -1,0 +1,51 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy name="SphereAlongLines"
+                 class="vtkSphereAlongLines"
+                 label="Sphere Along Lines">
+
+      <InputProperty name="Input"
+                     command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkPolyData"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input to the Sphere Along Lines filter.
+        </Documentation>
+      </InputProperty>
+
+      <DoubleVectorProperty animateable="1"
+                            command="SetAnimationTime"
+                            default_values="0"
+                            name="AnimationTime"
+                            number_of_elements="1">
+        <DoubleRangeDomain max="1" min="0" name="range" />
+        <Documentation>The value of this property allows to animate spheres along input pathes. This value is expected to be inside [0,1]  range.</Documentation>
+      </DoubleVectorProperty>
+
+      <IntVectorProperty command="SetWalkType"
+                         default_values="0"
+                         name="WalkType"
+                         number_of_elements="1">
+        <EnumerationDomain name="enum">
+          <Entry text="INTEGRATION TIME WHOLE"
+                 value="0" />
+          <Entry text="INTAGRATION TIME"
+                 value="1" />
+          <Entry text="CURVE ABSICSSA"
+                 value="2" />
+        </EnumerationDomain>
+        <Documentation>This property determines in which direction(s) a
+        streamline is generated.</Documentation>
+      </IntVectorProperty>
+
+      <Hints>
+         <ShowInMenu category="CFD" />
+      </Hints>
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

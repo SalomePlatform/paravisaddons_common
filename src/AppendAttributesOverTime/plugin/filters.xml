@@ -1,0 +1,33 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+
+    <SourceProxy class="vtkAppendAttributesOverTime"
+                 label="Append Attributes Over Time"
+                 name="AppendAttributesOverTime">
+      <Documentation long_help="Copies geometry from first input. Puts all of the arrays of each timesteps into the output."
+                     short_help="Puts all input arrays into the single output.">
+        The Append Attributes Over Time filter takes multiple input data
+        sets with the same geometry and merges their attributes to produce
+        a single output containing all these attributes.
+        Any inputs without the same number of points and cells as the first
+        input are ignored.
+        Each array of each timestep of each input is copied to the output.
+        Note that the output is not a temporal dataset.</Documentation>
+      <InputProperty clean_command="RemoveAllInputs"
+                     command="AddInputConnection"
+                     multiple_input="1"
+                     name="Input">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources" />
+          <Group name="filters" />
+        </ProxyGroupDomain>
+        <DataTypeDomain composite_data_supported="1"
+                        name="input_type">
+          <DataType value="vtkDataObject" />
+        </DataTypeDomain>
+        <Documentation>This property specifies the input to the filter.</Documentation>
+      </InputProperty>
+    </SourceProxy>
+
+  </ProxyGroup>
+</ServerManagerConfiguration>

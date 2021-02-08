@@ -1,0 +1,106 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="seed_sources">
+    <SourceProxy class="vtkPointSource"
+                 label="Small Point Source"
+                 name="SmallPointSource">
+      <DoubleVectorProperty animateable="1"
+                            command="SetCenter"
+                            default_values="0.0 0.0 0.0"
+                            name="Center"
+                            number_of_elements="3">
+        <BoundsDomain default_mode="mid"
+                      mode="normal"
+                      name="range">
+          <RequiredProperties>
+            <Property function="Input"
+                      name="DummyInput" />
+          </RequiredProperties>
+        </BoundsDomain>
+      </DoubleVectorProperty>
+      <IntVectorProperty animateable="1"
+                         command="SetNumberOfPoints"
+                         default_values="1"
+                         name="NumberOfPoints"
+                         number_of_elements="1">
+        <IntRangeDomain min="1"
+                        name="range" />
+      </IntVectorProperty>
+      <DoubleVectorProperty animateable="1"
+                            command="SetRadius"
+                            default_values="1.0"
+                            name="Radius"
+                            number_of_elements="1">
+        <BoundsDomain mode="scaled_extent"
+                      name="range"
+                      scale_factor="0.001">
+          <RequiredProperties>
+            <Property function="Input"
+                      name="DummyInput" />
+          </RequiredProperties>
+        </BoundsDomain>
+      </DoubleVectorProperty>
+      <InputProperty is_internal="1"
+                     name="DummyInput">
+        <!-- Used when this source is added to a proxy list domain. -->
+      </InputProperty>
+      <PropertyGroup label="Sphere Parameters"
+                     panel_widget="InteractiveSphere">
+        <Property function="Center"
+                  name="Center" />
+        <Property function="Radius"
+                  name="Radius" />
+        <Property function="Input"
+                  name="DummyInput" />
+      </PropertyGroup>
+      <Hints>
+        <ProxyList>
+          <Link name="DummyInput" with_property="Input" />
+        </ProxyList>
+      </Hints>
+      <!-- End PointSource -->
+    </SourceProxy>
+  </ProxyGroup>
+  <ProxyGroup name="filters">
+    <SourceProxy name="TemporalOnPoint"
+                 class="vtkTemporalOnPoint"
+                 label="Temporal On Point">
+     <InputProperty name="Input"
+                    command="SetInputConnection">
+       <ProxyGroupDomain name="groups">
+         <Group name="sources"/>
+         <Group name="filters"/>
+       </ProxyGroupDomain>
+       <DataTypeDomain name="input_type">
+         <DataType value="vtkDataSet"/>
+       </DataTypeDomain>
+       <Documentation>
+         This property specifies the input to the Level Scalars filter.
+       </Documentation>
+     </InputProperty>
+
+     <InputProperty command="SetSourceConnection"
+                     label="Source"
+                     name="Source"
+                     panel_visibility="default">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources" />
+        </ProxyGroupDomain>
+	<ProxyListDomain name="proxy_list">
+          <Proxy group="seed_sources"
+                 name="SmallPointSource" />
+        </ProxyListDomain>
+        <Documentation>This property specifies the dataset whose geometry will
+        be used in determining positions to probe.</Documentation>
+     </InputProperty>
+
+     <Hints>
+        <ShowInMenu category="Hydraulics" />
+     </Hints>
+
+     <Hints>
+        <View type="XYChartView" />
+     </Hints>
+
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

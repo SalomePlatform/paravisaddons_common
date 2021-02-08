@@ -1,0 +1,54 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="filters">
+    <SourceProxy class="vtkRosetteCIH"
+                 name="Rosettes de contrainte">
+      <InputProperty name="Input"
+                     command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkUnstructuredGrid"/>
+        </DataTypeDomain>
+        <Documentation short_help= "Affiche les rosettes de contraintes."
+                       long_help = "Affiche les rosettes de contraintes.">
+        </Documentation>
+      </InputProperty>
+      <DoubleVectorProperty command="SetScaleFactor"
+                            default_values="1e-6"
+                            name="ScaleFactor"
+                            number_of_elements="1"
+                            animateable="1"
+                            panel_visibility="default">
+        <Documentation>This property specifies the scale factor applied to the length of the ribbon.
+        </Documentation>
+      </DoubleVectorProperty>
+      <DoubleVectorProperty command="SetWidthFactor"
+                            default_values="0.1"
+                            name="WidthFactor"
+                            number_of_elements="1"
+                            animateable="1"
+                            panel_visibility="default">
+        <Documentation>This property specifies the width factor applied to the ribbon.
+        </Documentation>
+      </DoubleVectorProperty>
+      <IntVectorProperty command="SetTypeOfDisplay"
+                         default_values="0"
+                         name="TypeOfDisplay"
+                         number_of_elements="1">
+        <EnumerationDomain name="enum">
+          <Entry text="T1 et T2 compression/traction" value="0" />
+          <Entry text="T1 only" value="1" />
+          <Entry text="T2 only" value="2" />
+        </EnumerationDomain>
+        <Documentation>Property pour specifier l'une des 3 visus liées aux rosettes.
+        </Documentation>
+      </IntVectorProperty>
+      <Hints>
+        <RepresentationType view="RenderView" type="Wireframe"/>
+        <ShowInMenu category="Mechanics" />
+      </Hints>
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

@@ -1,0 +1,117 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="sources">
+    <SourceProxy class="vtkTemporalDelimitedTextReader"
+                 label="Temporal CSV Reader"
+                 name="TemporalCSVReader">
+      <Documentation long_help="Reads a temporal Delimited Text values file into a 1D rectilinear grid."
+                     short_help="Read a temporal Delimited Text values file.">The
+                    temporal Delimited text reader reads a Delimited Text values
+                    file into a 1D rectilinear grid. A user defined column is
+                    used as time step indicator. On a given time step s, only
+                    the lines having this column at the value s are kept. The
+                    default file extensions are .csv, .tcsv, .txt.
+      </Documentation>
+      <!-- CSV Reader parameters -->
+      <StringVectorProperty animateable="1"
+                            command="SetFileName"
+                            name="FileName"
+                            number_of_elements="1"
+                            panel_visibility="never">
+        <FileListDomain name="files" />
+        <Documentation>This property specifies the file name for the temporal CSV
+          (Command Separated Values) reader.
+        </Documentation>
+      </StringVectorProperty>
+      <StringVectorProperty command="SetFieldDelimiterCharacters"
+                            default_values=""
+                            name="FieldDelimiterCharacters"
+                            number_of_elements="1">
+        <Documentation>This property lists the characters that may be used to
+          separate fields. For example, a value of "," indicates a
+          comma-separated value file. A value of ".:;" indicates that columns
+          may be separated by a period, colon or semicolon. The order of the
+          characters in the text string does not matter.
+        </Documentation>
+      </StringVectorProperty>
+      <IntVectorProperty command="SetAddTabFieldDelimiter"
+                         default_values="0"
+                         name="AddTabFieldDelimiter"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <BooleanDomain name="bool" />
+        <Documentation>This property indicates whether to add the tab character as a
+          field delimiter to the list of other delimiter characters. This is needed
+          since in the GUI the user can't enter a tab character.
+        </Documentation>
+      </IntVectorProperty>
+      <IntVectorProperty command="SetMergeConsecutiveDelimiters"
+                         default_values="0"
+                         name="MergeConsecutiveDelimiters"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <BooleanDomain name="bool" />
+        <Documentation>Whether to merge successive delimiters. Use this if (for
+          example) your fields are separated by spaces but you don't know exactly
+          how many.
+        </Documentation>
+      </IntVectorProperty>
+      <IntVectorProperty command="SetHaveHeaders"
+                         default_values="1"
+                         name="HaveHeaders"
+                         number_of_elements="1">
+        <BooleanDomain name="bool" />
+        <Documentation>If the value of this property is 1, treat the first line
+          of the file as headers. Otherwise, column are named using their
+          position with the following pattern: "Field [num]" starting at 0. Use
+          this name to define the temporal indicator.
+        </Documentation>
+      </IntVectorProperty>
+
+      <!-- Time step indicator fields -->
+      <StringVectorProperty animateable="1"
+                            command="SetTimeColumnName"
+                            name="TimeColumnName"
+                            number_of_elements="1">
+        <Documentation>This property specifies the name of the column
+          to use as time indicator.
+        </Documentation>
+      </StringVectorProperty>
+      <IntVectorProperty command="SetRemoveTimeStepColumn"
+                         default_values="1"
+                         name="RemoveTimeStepColumn"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <BooleanDomain name="bool" />
+        <Documentation>This property specifies wether or not to keep
+          the column chosen as time step indicator in the output.
+        </Documentation>
+      </IntVectorProperty>
+      <!-- Tell paraview about time steps -->
+      <DoubleVectorProperty information_only="1"
+                            name="TimestepValues"
+                            repeatable="1">
+        <TimeStepsInformationHelper />
+        <Documentation>Available timestep values.</Documentation>
+      </DoubleVectorProperty>
+
+       <!-- structure -->
+      <PropertyGroup panel_widget="Line" label="Temporal indicator parmeters">
+        <Property name="TimeColumnName" />
+        <Property name="RemoveTimeStepColumn" />
+      </PropertyGroup>
+      <PropertyGroup panel_widget="Line" label="Input file parameters">
+        <Property name="FieldDelimiterCharacters" />
+        <Property name="AddTabFieldDelimiter" />
+        <Property name="HaveHeaders" />
+        <Property name="MergeConsecutiveDelimiters" />
+      </PropertyGroup>
+
+      <Hints>
+        <View type="SpreadSheetView" />
+        <ReaderFactory extensions="csv trco tsv txt CSV TSV TXT"
+                       file_description="Temporal Delimited Text" />
+      </Hints>
+
+   </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

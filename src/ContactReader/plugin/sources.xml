@@ -1,0 +1,33 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="sources">
+    <SourceProxy class="vtkContactReader"
+                 name="ContactReader">
+      <Documentation
+        short_help= "Lit un fichier pour afficher les resultantes au contact."
+        long_help = "Lit un fichier pour afficher les resultantes au contact.">
+      </Documentation>
+      <StringVectorProperty number_of_elements="1"
+                            animateable="0"
+                            name="FileName"
+                            command="SetFileName">
+        <FileListDomain name="files" />
+        <Documentation>
+          This property specifies the file name for this reader.
+        </Documentation>
+      </StringVectorProperty>
+      <DoubleVectorProperty command="SetScaleFactor"
+                            default_values="0.02"
+                            name="ScaleFactor"
+                            number_of_elements="1"
+                            animateable="1"
+                            panel_visibility="default">
+        <Documentation>
+          This property specifies the scale factor applied to the size of arrows.
+        </Documentation>
+      </DoubleVectorProperty>
+      <Hints>
+        <ReaderFactory extensions="rco" file_description="Resultantes files (Plugin)" />
+      </Hints>
+    </SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>

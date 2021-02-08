@@ -1,0 +1,304 @@
+<ServerManagerConfiguration>
+
+  <ProxyGroup name="edf_internal_sources">
+    <!-- Copied from utilities.xml to use InteractiveHandle instead of InteractiveSphere -->
+    <SourceProxy class="vtkPointSource"
+                 label="Fixed Radius Point Source"
+                 name="FixedRadiusPointSource">
+      <DoubleVectorProperty animateable="1"
+                            command="SetCenter"
+                            default_values="0.0 0.0 0.0"
+                            name="Center"
+                            number_of_elements="3">
+        <BoundsDomain default_mode="mid"
+                      mode="normal"
+                      name="range">
+          <RequiredProperties>
+            <Property function="Input"
+                      name="DummyInput" />
+          </RequiredProperties>
+        </BoundsDomain>
+      </DoubleVectorProperty>
+      <IntVectorProperty animateable="1"
+                         command="SetNumberOfPoints"
+                         default_values="1"
+                         name="NumberOfPoints"
+                         panel_visibility="never"
+                         number_of_elements="1">
+        <IntRangeDomain min="1"
+                        name="range" />
+      </IntVectorProperty>
+      <DoubleVectorProperty animateable="1"
+                            command="SetRadius"
+                            default_values="0.0"
+                            name="Radius"
+                            panel_visibility="never"
+                            number_of_elements="1">
+        <DoubleRangeDomain min="0.0"
+                           name="range" />
+      </DoubleVectorProperty>
+      <InputProperty is_internal="1"
+                     name="DummyInput">
+        <!-- Used when this source is added to a proxy list domain. -->
+      </InputProperty>
+      <PropertyGroup label="Point Parameters" panel_widget="InteractiveHandle">
+        <Property function="WorldPosition" name="Center" />
+        <!-- <Property function="Radius" name="Radius" /> -->
+        <Property function="Input" name="DummyInput" />
+      </PropertyGroup>
+      <Hints>
+        <ProxyList>
+          <Link name="DummyInput" with_property="Input" />
+        </ProxyList>
+      </Hints>
+      <!-- End internal FixedRadiusPointSource -->
+    </SourceProxy>
+  </ProxyGroup>
+
+  <ProxyGroup name="edf_internal_filters">
+    <!-- Copied from filters.xml in order to use point source as InputConnection -->
+    <SourceProxy class="vtkResampleWithDataSet"
+                 label="Resample With Dataset"
+                 name="ResampleWithDataset">
+      <Documentation short_help="Sample data attributes at the points of a dataset.">
+          This filter takes two inputs - Input and Source, and samples the
+          point and cell values of Input on to the point locations of Source.
+          The output has the same structure as Source but its point data
+          have the resampled values from Input."
+      </Documentation>
+      <InputProperty command="SetSourceConnection" name="Input">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources" />
+          <Group name="filters" />
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet" />
+          <DataType value="vtkCompositeDataSet" />
+        </DataTypeDomain>
+        <Documentation>This property specifies the dataset from which to obtain
+        probe values. The data attributes come from this dataset.</Documentation>
+      </InputProperty>
+
+      <!-- original InputProperty -->
+      <!--<InputProperty command="SetInputConnection" name="Source">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources" />
+          <Group name="filters" />
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet" />
+          <DataType value="vtkCompositeDataSet" />
+        </DataTypeDomain>
+        <Documentation>This property specifies the dataset whose geometry will
+        be used in determining positions to probe. The mesh comes from this
+        dataset.</Documentation>
+      </InputProperty> -->
+      <!-- Custom InputProperty -->
+      <InputProperty command="SetInputConnection"
+                     label="Seed Type"
+                     name="Source"
+                     panel_visibility="default">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources" />
+        </ProxyGroupDomain>
+        <ProxyListDomain name="proxy_list">
+          <Proxy group="edf_internal_sources" name="FixedRadiusPointSource"/>
+        </ProxyListDomain>
+        <Documentation>The value of this property determines how the seeds for
+        the streamlines will be generated.</Documentation>
+      </InputProperty>
+
+      <IntVectorProperty command="SetCategoricalData"
+                         default_values="0"
+                         name="CategoricalData"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <BooleanDomain name="bool" />
+        <Documentation>Control whether the source point data is to be
+        treated as categorical. If the data is categorical, then the
+        resultant data will be determined by a nearest neighbor
+        interpolation scheme rather than by linear interpolation.</Documentation>
+      </IntVectorProperty>
+      <IntVectorProperty command="SetPassCellArrays"
+                         default_values="0"
+                         name="PassCellArrays"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <Documentation>
+        When set the input's cell data arrays are shallow copied to the output.
+        </Documentation>
+        <BooleanDomain name="bool" />
+      </IntVectorProperty>
+      <IntVectorProperty command="SetPassPointArrays"
+                         default_values="0"
+                         name="PassPointArrays"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <Documentation>
+        When set the input's point data arrays are shallow copied to the output.
+        </Documentation>
+        <BooleanDomain name="bool" />
+      </IntVectorProperty>
+
+      <IntVectorProperty command="SetPassFieldArrays"
+                         default_values="1"
+                         name="PassFieldArrays"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <Documentation>
+        Set whether to pass the field-data arrays from the Input i.e. the input
+        providing the geometry to the output. On by default.
+        </Documentation>
+        <BooleanDomain name="bool" />
+      </IntVectorProperty>
+
+      <IntVectorProperty command="SetComputeTolerance"
+                         default_values="1"
+                         name="ComputeTolerance"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <Documentation>
+        Set whether to compute the tolerance or to use a user provided
+        value. On by default.
+        </Documentation>
+        <BooleanDomain name="bool" />
+      </IntVectorProperty>
+      <DoubleVectorProperty command="SetTolerance"
+                            default_values="2.2204460492503131e-16"
+                            name="Tolerance"
+                            number_of_elements="1"
+                            panel_visibility="advanced">
+        <DoubleRangeDomain min="2.2204460492503131e-16"
+                           name="range" />
+        <Hints>
+          <PropertyWidgetDecorator type="ShowWidgetDecorator">
+            <Property name="ComputeTolerance" function="boolean_invert" />
+          </PropertyWidgetDecorator>
+        </Hints>
+        <Documentation>Set the tolerance to use for
+        vtkDataSet::FindCell</Documentation>
+      </DoubleVectorProperty>
+
+      <IntVectorProperty command="SetMarkBlankPointsAndCells"
+                         default_values="0"
+                         name="MarkBlankPointsAndCells"
+                         number_of_elements="1"
+                         panel_visibility="advanced">
+        <Documentation>
+        When set, points that did not get valid values during resampling, and
+        cells containing such points, are marked as blank.
+        </Documentation>
+        <BooleanDomain name="bool" />
+      </IntVectorProperty>
+
+      <!-- cell locator begin -->
+      <ProxyProperty command="SetCellLocatorPrototype"
+                     label="Cell Locator"
+                     name="CellLocator"
+                     panel_visibility="advanced">
+        <ProxyGroupDomain name="groups">
+          <Group name="cell_locators" />
+        </ProxyGroupDomain>
+        <ProxyListDomain name="proxy_list">
+          <Proxy group="cell_locators"
+                 name="StaticCellLocator" />
+          <Proxy group="cell_locators"
+                 name="CellTreeLocator" />
+          <Proxy group="cell_locators"
+                 name="CellLocator" />
+        </ProxyListDomain>
+        <Documentation>The cell locator to use for finding cells for probing.
+        </Documentation>
+      </ProxyProperty>
+      <!-- cell locator end -->
+      <!-- End internal ResampleWithDataset -->
+    </SourceProxy>
+  </ProxyGroup>
+
+  <ProxyGroup name="filters">
+    <CompoundSourceProxy name="ProbePointOverTime" label="Probe Point Over Time" id="7625" servers="1">
+      <Hints>
+        <ShowInMenu category="CFD" />
+      </Hints>
+      <Proxy group="edf_internal_filters" type="ResampleWithDataset" id="7400" servers="1" compound_name="ResampleWithDataset1">
+        <Property name="CategoricalData" id="7400.CategoricalData" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="7400.CategoricalData.bool"/>
+        </Property>
+        <Property name="CellLocator" id="7400.CellLocator" number_of_elements="1">
+          <Proxy value="7397"/>
+          <Domain name="groups" id="7400.CellLocator.groups"/>
+          <Domain name="proxy_list" id="7400.CellLocator.proxy_list">
+            <Proxy value="7397"/>
+            <Proxy value="7398"/>
+            <Proxy value="7399"/>
+          </Domain>
+        </Property>
+        <Property name="ComputeTolerance" id="7400.ComputeTolerance" number_of_elements="1">
+          <Element index="0" value="1"/>
+          <Domain name="bool" id="7400.ComputeTolerance.bool"/>
+        </Property>
+        <Property name="Input" id="7400.Input" number_of_elements="1">
+          <Domain name="groups" id="7400.Input.groups"/>
+          <Domain name="input_type" id="7400.Input.input_type"/>
+        </Property>
+        <Property name="MarkBlankPointsAndCells" id="7400.MarkBlankPointsAndCells" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="7400.MarkBlankPointsAndCells.bool"/>
+        </Property>
+        <Property name="PassCellArrays" id="7400.PassCellArrays" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="7400.PassCellArrays.bool"/>
+        </Property>
+        <Property name="PassFieldArrays" id="7400.PassFieldArrays" number_of_elements="1">
+          <Element index="0" value="1"/>
+          <Domain name="bool" id="7400.PassFieldArrays.bool"/>
+        </Property>
+        <Property name="PassPointArrays" id="7400.PassPointArrays" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="7400.PassPointArrays.bool"/>
+        </Property>
+        <Property name="Tolerance" id="7400.Tolerance" number_of_elements="1">
+          <Element index="0" value="2.220446049250313e-16"/>
+          <Domain name="range" id="7400.Tolerance.range"/>
+        </Property>
+      </Proxy>
+      <Proxy group="cell_locators" type="StaticCellLocator" id="7397" servers="1" compound_name="auto_7397"/>
+      <Proxy group="filters" type="PlotDataOverTime" id="20248" servers="1" compound_name="PlotDataOverTime1">
+        <Property name="FieldAssociation" id="20248.FieldAssociation" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="enum" id="20248.FieldAssociation.enum">
+            <Entry value="0" text="Points"/>
+            <Entry value="1" text="Cells"/>
+            <Entry value="4" text="Vertices"/>
+            <Entry value="5" text="Edges"/>
+            <Entry value="6" text="Rows"/>
+          </Domain>
+        </Property>
+        <Property name="Input" id="20248.Input" number_of_elements="1">
+          <Proxy value="7400" output_port="0"/>
+          <Domain name="groups" id="20248.Input.groups"/>
+          <Domain name="input_type" id="20248.Input.input_type"/>
+        </Property>
+        <Property name="Only Report Selection Statistics" id="20248.Only Report Selection Statistics" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="20248.Only Report Selection Statistics.bool"/>
+        </Property>
+      </Proxy>
+      <ExposedProperties>
+        <Property name="Input" proxy_name="ResampleWithDataset1" exposed_name="Input"/>
+        <Property name="Source" proxy_name="ResampleWithDataset1" exposed_name="Source"/>
+      </ExposedProperties>
+      <OutputPort name="Output" proxy="PlotDataOverTime1" port_index="0"/>
+      <Hints>
+        <View type="QuartileChartView" />
+        <WarnOnCreate title="Potentially slow operation">
+          **Plot Selection Over Time** filter needs to process all timesteps
+          available in your dataset and can potentially take a long time to complete.
+          Do you want to continue?
+        </WarnOnCreate>
+        <ShowInMenu/>
+      </Hints>
+    </CompoundSourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>
