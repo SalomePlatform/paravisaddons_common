@@ -35,10 +35,6 @@
 
 const char ZE_SEPP[]="@@][@@";
 
-const char ElectromagnetismRotationGrp::START[]="GRP_";
-
-const char ElectromagnetismRotationFam::START[]="FAM_";
-
 ElectromagnetismRotationStatus::ElectromagnetismRotationStatus(const char *name):_status(false),_name(name)
 {
 }
@@ -67,13 +63,18 @@ bool ElectromagnetismRotationGrp::isSameAs(const ElectromagnetismRotationGrp& ot
     return false;
 }
 
+ElectromagnetismRotationGrp::ElectromagnetismRotationGrp(const char *name):ElectromagnetismRotationStatus(name)
+{
+  std::ostringstream oss; oss << ElectromagnetismRotationGrp::start() << name; _ze_key_name=oss.str();
+}
+
 ElectromagnetismRotationFam::ElectromagnetismRotationFam(const char *name):ElectromagnetismRotationStatus(name),_id(0)
 {
   std::size_t pos(_name.find(ZE_SEPP));
   std::string name0(_name.substr(0,pos)),name1(_name.substr(pos+strlen(ZE_SEPP)));
   std::istringstream iss(name1);
   iss >> _id;
-  std::ostringstream oss; oss << START << name; _ze_key_name=oss.str(); _name=name0;
+  std::ostringstream oss; oss << ElectromagnetismRotationFam::start() << name; _ze_key_name=oss.str(); _name=name0;
 }
 
 bool ElectromagnetismRotationFam::isSameAs(const ElectromagnetismRotationFam& other) const

@@ -25,6 +25,7 @@
 #include <set>
 #include <map>
 
+#define MEDLOADERFORPV_EXPORTS
 #include "MEDLoaderForPV.h"
 
 class MEDLOADERFORPV_EXPORT ElectromagnetismRotationStatus
@@ -41,20 +42,20 @@ public:
   virtual void printMySelf(std::ostream& os) const;
   virtual bool isSameAs(const ElectromagnetismRotationStatus& other) const;
 protected:
-mutable bool _status;
-std::string _name;
-std::string _ze_key_name;
+  mutable bool _status;
+  std::string _name;
+  std::string _ze_key_name;
 };
 
 class MEDLOADERFORPV_EXPORT ElectromagnetismRotationGrp : public ElectromagnetismRotationStatus
 {
 public:
-  ElectromagnetismRotationGrp(const char *name):ElectromagnetismRotationStatus(name) { std::ostringstream oss; oss << START << name; _ze_key_name=oss.str(); }
+  ElectromagnetismRotationGrp(const char *name);
   void setFamilies(const std::vector<std::string>& fams) { _fams=fams; }
   const std::vector<std::string>& getFamiliesLyingOn() const { return _fams; }
   bool isSameAs(const ElectromagnetismRotationGrp& other) const;
+  static const char* start() { return "GRP_"; }
 public:
-  static const char START[];
   std::vector<std::string> _fams;
 };
 
@@ -66,8 +67,7 @@ public:
   void fillIdsToKeep(std::set<int>& s) const;
   int getId() const { return _id; }
   bool isSameAs(const ElectromagnetismRotationFam& other) const;
-public:
-  static const char START[];
+  static const char* start() { return "FAM_"; }
 private:
   int _id;
 };

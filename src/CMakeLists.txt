@@ -69,9 +69,4 @@ ADD_SUBDIRECTORY(GlyphCIH) # EDF15785
 ADD_SUBDIRECTORY(ElectromagnetismVecteur)
 ADD_SUBDIRECTORY(ElectromagnetismStreamTraceur)
 ADD_SUBDIRECTORY(ElectromagnetismFluxDisc)
-
-IF(NOT WIN32)
-  # still being under investigations
-  MESSAGE(WARNING "ElectromagnetismRotation will be skipped")
-  ADD_SUBDIRECTORY(ElectromagnetismRotation)
-ENDIF(NOT WIN32)
+ADD_SUBDIRECTORY(ElectromagnetismRotation)

@@ -406,12 +406,12 @@ int vtkElectromagnetismRotation::GetSILUpdateStamp()
 
 const char* vtkElectromagnetismRotation::GetGrpStart()
 {
-  return ElectromagnetismRotationGrp::START;
+  return ElectromagnetismRotationGrp::start();
 }
 
 const char* vtkElectromagnetismRotation::GetFamStart()
 {
-  return ElectromagnetismRotationFam::START;
+  return ElectromagnetismRotationFam::start();
 }
 
 void vtkElectromagnetismRotation::PrintSelf(ostream& os, vtkIndent indent)
