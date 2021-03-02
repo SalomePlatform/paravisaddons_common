@@ -176,8 +176,23 @@ void vtkRosetteCIH::PostTraitementT1etT2(
   vtkSmartPointer<vtkDataSet> gl2 =
     this->GenerateGlyphLinesFor(usgIn, "T2", COMPRESS_TRACTION);
   //
+  vtkNew<vtkDataSetSurfaceFilter> surface;
+  surface->SetNonlinearSubdivisionLevel(0);
+  surface->SetInputData(usgIn);
+  surface->Update();
+  vtkNew<vtkPolyData> surfaceCpy;
+  surfaceCpy->ShallowCopy(surface->GetOutput());
+  vtkNew<vtkDoubleArray> compressionOrTraction;
+  auto nbOfTuples(surface->GetOutput()->GetNumberOfPoints());
+  compressionOrTraction->SetNumberOfComponents(1);
+  compressionOrTraction->SetNumberOfTuples(nbOfTuples);
+  compressionOrTraction->SetName(COMPRESS_TRACTION);
+  compressionOrTraction->Fill(NAN);
+  surfaceCpy->GetPointData()->AddArray(compressionOrTraction);
+  //
   vtkNew<vtkMultiBlockDataGroupFilter> mb;
   vtkNew<vtkCompositeDataToUnstructuredGridFilter> cd;
+  mb->AddInputData(surfaceCpy);
   mb->AddInputData(gl1);
   mb->AddInputData(gl2);
   cd->SetInputConnection(mb->GetOutputPort());
@@ -449,13 +464,8 @@ void vtkRosetteCIH::PostTraitementOnlyOneCompo(vtkUnstructuredGrid* usgIn,
   compressionOrTractionNaN->Fill(NAN);
   fieldData->AddArray(compressionOrTractionNaN);
 
-  vtkNew<vtkTessellatorFilter> tesselator;
-  tesselator->SetOutputDimension(1);
-  tesselator->SetInputData(usgInCpy);
-  tesselator->Update();
-
   vtkNew<vtkMultiBlockDataGroupFilter> mb;
-  mb->AddInputData(tesselator->GetOutput());
+  mb->AddInputData(usgInCpy);
   mb->AddInputData(ret);
 
   vtkNew<vtkCompositeDataToUnstructuredGridFilter> cd;
