@@ -29,7 +29,7 @@
 #include <vtkCharArray.h>
 #include <vtkCompositeDataToUnstructuredGridFilter.h>
 #include <vtkDataArraySelection.h>
-#include <vtkDataArrayTemplate.h>
+#include <vtkAOSDataArrayTemplate.h>
 #include <vtkDataObjectTreeIterator.h>
 #include <vtkDataSet.h>
 #include <vtkDataSetAttributes.h>
@@ -363,7 +363,7 @@ vtkDataSet* FilterFamilies(vtkZJFilter* zeBoss, vtkDataSet* input, const std::se
   bool catchAll, catchSmth;
   vtkNew<vtkThreshold> thres;
   thres->AddObserver(vtkCommand::ProgressEvent, zeBoss->InternalProgressObserver);
-  constexpr int VTK_DATA_ARRAY_DELETE = vtkDataArrayTemplate<double>::VTK_DATA_ARRAY_DELETE;
+  constexpr int VTK_DATA_ARRAY_DELETE = vtkAOSDataArrayTemplate<double>::VTK_DATA_ARRAY_DELETE;
   constexpr char ZE_SELECTION_ARR_NAME[] = "@@ZeSelection@@";
   constexpr char arrNameOfFamilyField[] = "FamilyIdCell";
   constexpr char associationForThreshold[] = "vtkDataObject::FIELD_ASSOCIATION_CELLS";

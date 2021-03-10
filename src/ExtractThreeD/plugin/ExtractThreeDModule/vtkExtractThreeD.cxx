@@ -30,7 +30,7 @@
 #include <vtkCellData.h>
 #include <vtkCharArray.h>
 #include <vtkDataArraySelection.h>
-#include <vtkDataArrayTemplate.h>
+#include <vtkAOSDataArrayTemplate.h>
 #include <vtkDataObjectTreeIterator.h>
 #include <vtkDataSet.h>
 #include <vtkDataSetAttributes.h>
@@ -156,7 +156,7 @@ int vtkExtractThreeD::RequestInformation(vtkInformation *request, vtkInformation
 
 vtkDataSet *FilterFamilies(vtkDataSet *input, const std::vector<int> &idsToKeep)
 {
-  const int VTK_DATA_ARRAY_DELETE = vtkDataArrayTemplate<double>::VTK_DATA_ARRAY_DELETE;
+  const int VTK_DATA_ARRAY_DELETE = vtkAOSDataArrayTemplate<double>::VTK_DATA_ARRAY_DELETE;
   const char ZE_SELECTION_ARR_NAME[] = "@@ZeSelection@@";
   vtkDataSet *output(input->NewInstance());
   output->ShallowCopy(input);
