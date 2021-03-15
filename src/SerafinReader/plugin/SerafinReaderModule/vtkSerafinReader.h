@@ -80,13 +80,11 @@ public:
   vtkTypeMacro(vtkSerafinReader,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  void SetTimeUnit(int);
-
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
 
-  vtkSetMacro(TimeStep, int);
-  vtkGetMacro(TimeStep, int);
+  vtkSetMacro(BuildVectors, int);
+  vtkGetMacro(BuildVectors, int);
 
 protected:
 
@@ -108,7 +106,8 @@ protected:
   char    *FileName;   // Nom du fichier ouvert par le logiciel Paraview
   ifstream *FileStream;// Flux de lecture du fichier
 
-  int TimeStep;
+  int TimeStep; // Internal variable to remember actual time step
+  int BuildVectors; // Defines if variables are to be converter to vectors (when necessary)
 
   stdSerafinReader* Reader; /** /!\ Instance de lecture du fichier Serafin **/
 

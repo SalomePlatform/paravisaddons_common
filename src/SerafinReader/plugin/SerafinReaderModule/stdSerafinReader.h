@@ -177,7 +177,7 @@ class stdSerafinReader : public FFileReader
 {
 public:
   // Simple constructeur (flux en argument)
-  stdSerafinReader(ifstream* stream);
+  stdSerafinReader(ifstream* stream, int BuildVectors);
 
   // Destructeur de base
   ~stdSerafinReader() {
@@ -380,7 +380,7 @@ protected:
   void createIndex ();
 
 	// Identify vector info for each variable
-	void ComputeVarInfo ();
+	void ComputeVarInfo (int BuildVectors);
   ////// Ensemble de fonction de lecture de la table d'index \\\\\\
 
   // [fixés] Déplace la tête de lecture sur la positon id dans la table des valeurs de X ou Y

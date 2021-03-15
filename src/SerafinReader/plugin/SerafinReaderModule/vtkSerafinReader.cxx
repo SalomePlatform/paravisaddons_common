@@ -209,7 +209,7 @@ FFileReader :: ~FFileReader()
 /** +++++++++++++++++ Définition des méthodes de la classe stdSerafinReader +++++++++++++++++ **/
 
 /* ******************* Constructeur ***************** */
-stdSerafinReader :: stdSerafinReader(ifstream* stream) : FFileReader(stream)
+stdSerafinReader :: stdSerafinReader(ifstream* stream, int BuildVectors) : FFileReader(stream)
 {
   // TODO Initialisation des variables
   this->metadata  = new SerafinMetaData();
@@ -225,7 +225,7 @@ stdSerafinReader :: stdSerafinReader(ifstream* stream) : FFileReader(stream)
 
   // Identify variable vector
   //vtkDebugMacro( << "Computing Var Infor" << endl);
-  this->ComputeVarInfo();
+  this->ComputeVarInfo(BuildVectors);
 };
 
 /* ******************* Destructeur ***************** */
@@ -234,7 +234,7 @@ stdSerafinReader :: stdSerafinReader(ifstream* stream) : FFileReader(stream)
 //{
 //  // Ne rien faire pour le moment, provoque une 'legere fuite memoire' maitrisee
 //};
-void stdSerafinReader::ComputeVarInfo()
+void stdSerafinReader::ComputeVarInfo(int BuildVectors)
 {
   int pos, ncomp;
   int found;
@@ -245,19 +245,34 @@ void stdSerafinReader::ComputeVarInfo()
     ncomp = 2;
 
   for( int i; i < this->metadata->VarNumber ; i++) {
-      // must read full buffer as each varaible is a file record
-    string name(metadata->nVarList[i].name);
-    list<string> vec0 {" U ", " X ", "QX ", "U0 "};
-    list<string> vec1 {" V ", " Y ", "QY ", "V0 "};
-    list<string> vec2 {" W ", " Z ", "QZ ", "W0 "};
-    list<list<string>> vec {vec0, vec1, vec2};
-
-    pos = name.find("COTE Z");
-    if (pos != std::string::npos){
+    // Only converting to vector if asked for
+    if(! BuildVectors){
       metadata->nVarList[i].ncomp = 0;
       metadata->nVarList[i].icomp = 0;
       continue;
     }
+    string name(metadata->nVarList[i].name);
+
+    // Exception for which we do not create a vector
+    list<string> exceptions {"COTE Z", "ELEVATION Z"};
+
+    found = 0;
+    for(auto const &excep : exceptions){
+      pos = name.find(excep);
+      if (pos != std::string::npos){
+        metadata->nVarList[i].ncomp = 0;
+        metadata->nVarList[i].icomp = 0;
+        found = 1;
+        continue;
+      }
+    }
+    if (found) continue;
+
+    // List of ends of variable that should be converted to vectors
+    list<string> vec0 {" U ", " X ", "QX ", "U0 "};
+    list<string> vec1 {" V ", " Y ", "QY ", "V0 "};
+    list<string> vec2 {" W ", " Z ", "QZ ", "W0 "};
+    list<list<string>> vec {vec0, vec1, vec2};
 
     found = 0;
     int k = 0;
@@ -274,10 +289,10 @@ void stdSerafinReader::ComputeVarInfo()
         };
       }
       k++;
-      if (found != 0) break;
+      if (found) break;
     }
     // Found a vector go to next variable
-    if (found != 0) continue;
+    if (found) continue;
     // Default values
     metadata->nVarList[i].ncomp = 0;
     metadata->nVarList[i].icomp = 0;
@@ -288,7 +303,7 @@ void stdSerafinReader::ComputeVarInfo()
 /* Cette méthode crée un index de taille et de position à partir des informations meta
  * afin de faciliter la lecture du fichier serafin .
  */
-void stdSerafinReader :: createIndex ()
+void stdSerafinReader::createIndex ()
 {
   int tag = 0 ;
   int nnodes = GetNumberOfNodes();
@@ -442,10 +457,6 @@ vtkSerafinReader::~vtkSerafinReader()
   delete this->Internal;
 
 }
-void vtkSerafinReader::SetTimeUnit(int value)
-{
-  cerr << "TimeUnit " << value << endl;
-}
 
 int vtkSerafinReader::RequestInformation(vtkInformation *vtkNotUsed(request),
            vtkInformationVector **vtkNotUsed(inputVector),
@@ -471,7 +482,7 @@ int vtkSerafinReader::RequestInformation(vtkInformation *vtkNotUsed(request),
     return 0;
   }
 
-  this->Reader   = new stdSerafinReader( FileStream);
+  this->Reader   = new stdSerafinReader( FileStream, this->BuildVectors);
 
   {//Gestion du temps
     const int totime = this->Reader->GetTotalTime();
@@ -641,7 +652,6 @@ void vtkSerafinReader::ReadData(vtkUnstructuredGrid *output, int time)
     std::string name(var->name);
     name = name.substr(0, name.find_last_not_of(" \n")+1);
 
-    // TODO: Creating vector for VELOCITY and stuff
     if (var->ncomp != 0){
       data->SetName(name.c_str());
       data->SetNumberOfComponents(3);
@@ -656,8 +666,6 @@ void vtkSerafinReader::ReadData(vtkUnstructuredGrid *output, int time)
       this->Reader->GetVarValues(time, i, 0, data->GetPointer (0), size);
     }
 
-    {//Stockage des donnees
-    };
     output->GetPointData()->AddArray(data);
 
     data->Delete();
