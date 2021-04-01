@@ -20,6 +20,10 @@
 cmake_minimum_required(VERSION 3.8)
 project(ElectromagnetismRotation)
 
+IF(PARAVISADDONS_COMMON_BUILD_TESTS)
+  ADD_SUBDIRECTORY(Test)
+ENDIF(PARAVISADDONS_COMMON_BUILD_TESTS)
+
 find_package(ParaView REQUIRED)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
