@@ -1,4 +1,4 @@
-# Copyright (C) 2021  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2020  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,24 +16,22 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+# Author : Yoann Audouin (EDF)
 
-from medcoupling import *
+SET(test_maxwell_vecteur_0_src
+  test_maxwell_vecteur_0.py
+  )
 
-arr = DataArrayDouble([0,1,2])
-m = MEDCouplingCMesh()
-m.setCoords(arr,arr)
-m = m.buildUnstructured()
-#m.simplexize(0)
-m.changeSpaceDimension(3,0.)
-m.setName("mesh")
-f = MEDCouplingFieldDouble(ON_CELLS)
-f.setMesh(m)
-f.setName("field")
-f.setArray( DataArrayDouble([(1,1,0), (2,-2,0), (-3,3,0), (-4,-4,0)]) )
-f.getArray().setInfoOnComponents(["X","Y","Z"])
-f.checkConsistencyLight()
-f.write("test.med")
-f2 = f.deepCopy()
-f2.setArray( DataArrayDouble([(1,0,0), (0,-2,0), (-3,0,0), (0,4,0)]) )
-f2.setName("field2")
-WriteFieldUsingAlreadyWrittenMesh("test.med",f2)
+SALOME_GENERATE_TESTS_ENVIRONMENT(tests_env)
+
+ADD_TEST(ElectromagnetismVecteur python test_maxwell_vecteur_0.py)
+SET_TESTS_PROPERTIES(ElectromagnetismVecteur PROPERTIES ENVIRONMENT "${tests_env}")
+
+# Application tests
+
+SET(TEST_INSTALL_DIRECTORY ${PARAVISADDONS_COMMON_INSTALL_TESTS}/ElectromagnetismVecteur)
+INSTALL(FILES ${test_maxwell_vecteur_0_src} DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+INSTALL(FILES CTestTestfileInstall.cmake
+        DESTINATION ${TEST_INSTALL_DIRECTORY}
+        RENAME CTestTestfile.cmake)

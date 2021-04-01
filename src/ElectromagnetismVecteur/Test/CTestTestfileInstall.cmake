@@ -1,4 +1,4 @@
-# Copyright (C) 2021  CEA/DEN, EDF R&D
+# Copyright (C) 2015-2020  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,21 +17,15 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from paraview.simple import *
-#### disable automatic camera reset on 'Show'
-paraview.simple._DisableFirstRenderCameraReset()
+SET(TEST_NAMES
+  test_maxwell_vecteur_0
+)
 
-def MyAssert(clue):
-    if not clue:
-        raise RuntimeError("Assertion failed !")
-
-testmed = MEDReader(FileName='test.med')
-testmed.AllArrays = ['TS0/mesh/ComSup0/field@@][@@P0', 'TS0/mesh/ComSup0/field2@@][@@P0', 'TS0/mesh/ComSup0/mesh@@][@@P0']
-testmed.AllTimeSteps = ['0000']
-streamTraceur1 = LigneDeChamp(Input=testmed,SeedType='Point Source')
-streamTraceur1.SeedType.Radius = 1
-streamTraceur1.SeedType.Center = [ 7.23,7.26,3.42 ]
-streamTraceur1.Vectors = ['CELLS', "field"] #OrientationArray
-streamTraceur1.UpdatePipeline()
-ds0 = servermanager.Fetch(streamTraceur1)
-MyAssert(ds0.GetNumberOfCells()==200)
+FOREACH(tfile ${TEST_NAMES})
+  SET(TEST_NAME ${COMPONENT_NAME}_${tfile})
+  ADD_TEST(${TEST_NAME} python ${tfile}.py)
+  SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES
+    LABELS "${COMPONENT_NAME}"
+    TIMEOUT ${TIMEOUT}
+    )
+ENDFOREACH()
