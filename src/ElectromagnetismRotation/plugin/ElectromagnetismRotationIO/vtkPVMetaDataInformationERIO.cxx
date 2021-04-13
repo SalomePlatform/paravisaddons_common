@@ -18,7 +18,7 @@
 //
 // Author : Anthony Geay
 
-#include "vtkPVMetaDataInformation.h"
+#include "vtkPVMetaDataInformationERIO.h"
 
 #include "vtkAlgorithm.h"
 #include "vtkAlgorithmOutput.h"
@@ -35,8 +35,8 @@
 
 #include <sstream>
 
-vtkStandardNewMacro(vtkPVMetaDataInformation);
-vtkCxxSetObjectMacro(vtkPVMetaDataInformation, InformationData, vtkDataObject);
+vtkStandardNewMacro(vtkPVMetaDataInformationERIO);
+vtkCxxSetObjectMacro(vtkPVMetaDataInformationERIO, InformationData, vtkDataObject);
 
 static vtkInformationDataObjectMetaDataKey* GetMEDReaderMetaDataIfAny()
 {
@@ -52,19 +52,19 @@ static vtkInformationDataObjectMetaDataKey* GetMEDReaderMetaDataIfAny()
 }
 
 //----------------------------------------------------------------------------
-vtkPVMetaDataInformation::vtkPVMetaDataInformation()
+vtkPVMetaDataInformationERIO::vtkPVMetaDataInformationERIO()
 {
   this->InformationData = NULL;
 }
 
 //----------------------------------------------------------------------------
-vtkPVMetaDataInformation::~vtkPVMetaDataInformation()
+vtkPVMetaDataInformationERIO::~vtkPVMetaDataInformationERIO()
 {
   this->SetInformationData(NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkPVMetaDataInformation::CopyFromObject(vtkObject* obj)
+void vtkPVMetaDataInformationERIO::CopyFromObject(vtkObject* obj)
 {
   this->SetInformationData(NULL);
 
@@ -95,7 +95,7 @@ void vtkPVMetaDataInformation::CopyFromObject(vtkObject* obj)
 }
 
 //----------------------------------------------------------------------------
-void vtkPVMetaDataInformation::CopyToStream(vtkClientServerStream* css)
+void vtkPVMetaDataInformationERIO::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
   if (!this->InformationData)
@@ -127,7 +127,7 @@ void vtkPVMetaDataInformation::CopyToStream(vtkClientServerStream* css)
 }
 
 //----------------------------------------------------------------------------
-void vtkPVMetaDataInformation::CopyFromStream(const vtkClientServerStream* css)
+void vtkPVMetaDataInformationERIO::CopyFromStream(const vtkClientServerStream* css)
 {
   this->SetInformationData(0);
   vtkTypeUInt32 length;
@@ -145,12 +145,12 @@ void vtkPVMetaDataInformation::CopyFromStream(const vtkClientServerStream* css)
     }
 }
 
-void vtkPVMetaDataInformation::AddInformation(vtkPVInformation*)
+void vtkPVMetaDataInformationERIO::AddInformation(vtkPVInformation*)
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkPVMetaDataInformation::PrintSelf(ostream& os, vtkIndent indent)
+void vtkPVMetaDataInformationERIO::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "InformationData: " <<  this->InformationData << endl;

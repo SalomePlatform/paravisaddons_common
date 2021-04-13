@@ -61,13 +61,14 @@ public:
   vtkSetClampMacro(MaximumNumberOfSamplePoints, int, 1, VTK_INT_MAX);
   vtkGetMacro(MaximumNumberOfSamplePoints, int);
 
+  static const char *GetColorArrayName();
+
+
 protected:
   vtkElectromagnetismVecteur();
   ~vtkElectromagnetismVecteur() override = default;
 
   int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
-
-  static const char *GetColorArrayName();
 
   double ScaleFactor;
 

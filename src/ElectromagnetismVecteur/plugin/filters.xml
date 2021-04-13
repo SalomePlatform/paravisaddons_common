@@ -31,12 +31,6 @@
             <Property function="Input" name="Input" />
           </RequiredProperties>
         </BoundsDomain>
-        <ArrayRangeDomain name="scalar_range">
-          <RequiredProperties>
-            <Property function="Input" name="Input" />
-            <Property function="ArraySelection" name="ScaleArray" />
-          </RequiredProperties>
-        </ArrayRangeDomain>
         <ArrayRangeDomain name="vector_range">
           <RequiredProperties>
             <Property function="Input" name="Input" />
@@ -122,7 +116,7 @@ Every Nth Point.
                                    value="1" />
           <!-- show this widget when GlyphMode==1 -->
         </Hints>
-     </IntVectorProperty>
+      </IntVectorProperty>
 
       <StringVectorProperty command="SetInputArrayToProcess"
                             default_values="1"
@@ -142,8 +136,8 @@ Every Nth Point.
 Select the input array to use for orienting the glyphs.
         </Documentation>
       </StringVectorProperty>
-      
-    <StringVectorProperty
+
+      <StringVectorProperty
         name="ColorArrayName"
         command="GetColorArrayName"
         number_of_elements="1"

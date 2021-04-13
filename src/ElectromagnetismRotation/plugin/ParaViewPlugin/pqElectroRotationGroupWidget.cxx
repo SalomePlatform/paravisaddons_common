@@ -21,7 +21,7 @@
 #include "pqElectroRotationGroupWidget.h"
 
 #include "vtkElectromagnetismRotation.h"
-#include "vtkPVMetaDataInformation.h"
+#include "vtkPVMetaDataInformationERIO.h"
 
 #include "pqTreeWidget.h"
 #include "pqTreeWidgetItemObject.h"
@@ -51,7 +51,7 @@ pqElectroRotationGroupWidget::~pqElectroRotationGroupWidget()
 void pqElectroRotationGroupWidget::loadTreeWidgetItems()
 {
   // Recover Graph
-  vtkPVMetaDataInformation *info(vtkPVMetaDataInformation::New());
+  vtkPVMetaDataInformationERIO *info(vtkPVMetaDataInformationERIO::New());
   this->proxy()->GatherInformation(info);
   vtkGraph* graph = vtkGraph::SafeDownCast(info->GetInformationData());
   if(!graph)
@@ -152,7 +152,7 @@ void pqElectroRotationGroupWidget::loadTreeWidgetItems()
 
       // Tooltip
       grpItem->setData(0, Qt::ToolTipRole, name);
-      
+
       grpItem->setData(0, Qt::DecorationRole, QPixmap(":/ParaViewResources/Icons/pqCellData16.png"));
     }
   }

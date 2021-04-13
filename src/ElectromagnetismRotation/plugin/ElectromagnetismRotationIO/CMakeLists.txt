@@ -19,7 +19,7 @@
 
 set(classes
   vtkElectromagnetismRotation
-  vtkPVMetaDataInformation
+  vtkPVMetaDataInformationERIO
 )
 
 vtk_module_add_module(ElectromagnetismRotationIO

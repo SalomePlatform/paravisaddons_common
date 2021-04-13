@@ -18,19 +18,19 @@
 //
 // Author : Anthony Geay
 
-#ifndef __vtkPVMetaDataInformation_h
-#define __vtkPVMetaDataInformation_h
+#ifndef __vtkPVMetaDataInformationERIO_h
+#define __vtkPVMetaDataInformationERIO_h
 
 #include "vtkPVInformation.h"
 
 class vtkDataObject;
 class vtkInformationDataObjectKey;
 
-class VTK_EXPORT vtkPVMetaDataInformation : public vtkPVInformation
+class VTK_EXPORT vtkPVMetaDataInformationERIO : public vtkPVInformation
 {
 public:
-  static vtkPVMetaDataInformation* New();
-  vtkTypeMacro(vtkPVMetaDataInformation, vtkPVInformation);
+  static vtkPVMetaDataInformationERIO* New();
+  vtkTypeMacro(vtkPVMetaDataInformationERIO, vtkPVInformation);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -51,14 +51,14 @@ public:
 
 //BTX
 protected:
-  vtkPVMetaDataInformation();
-  ~vtkPVMetaDataInformation();
+  vtkPVMetaDataInformationERIO();
+  ~vtkPVMetaDataInformationERIO();
   void SetInformationData(vtkDataObject*);
   vtkDataObject* InformationData;
 
 private:
-  vtkPVMetaDataInformation(const vtkPVMetaDataInformation&); // Not implemented
-  void operator=(const vtkPVMetaDataInformation&); // Not implemented
+  vtkPVMetaDataInformationERIO(const vtkPVMetaDataInformationERIO&); // Not implemented
+  void operator=(const vtkPVMetaDataInformationERIO&); // Not implemented
 //ETX
 };
 

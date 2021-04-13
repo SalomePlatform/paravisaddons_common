@@ -58,25 +58,6 @@
         the streamlines will be generated.</Documentation>
       </InputProperty>
 
-      <PropertyGroup label="Seeds">
-        <Property name="Source" />
-      </PropertyGroup>
-
-      <PropertyGroup label="Integration Parameters">
-        <Property name="IntegrationDirection" />
-        <Property name="IntegratorType" />
-        <Property name="IntegrationStepUnit" />
-        <Property name="InitialIntegrationStep" />
-        <Property name="MinimumIntegrationStep" />
-        <Property name="MaximumIntegrationStep" />
-        <Property name="MaximumError" />
-      </PropertyGroup>
-
-      <PropertyGroup label="Streamline Parameters" >
-        <Property name="MaximumNumberOfSteps" />
-        <Property name="MaximumPropagation" />
-        <Property name="TerminalSpeed" />
-      </PropertyGroup>
 
 
 
@@ -199,6 +180,25 @@
         <ShowInMenu category="Electromagnetism" />
         <Visibility replace_input="2" />
       </Hints>
+
+      <PropertyGroup label="Seeds">
+        <Property name="Source" />
+      </PropertyGroup>
+
+      <PropertyGroup label="Integration Parameters">
+        <Property name="IntegrationDirection" />
+        <Property name="IntegratorType" />
+        <Property name="IntegrationStepUnit" />
+        <Property name="InitialIntegrationStep" />
+        <Property name="MinimumIntegrationStep" />
+        <Property name="MaximumIntegrationStep" />
+        <Property name="MaximumError" />
+      </PropertyGroup>
+
+      <PropertyGroup label="Streamline Parameters" >
+        <Property name="MaximumNumberOfSteps" />
+        <Property name="TerminalSpeed" />
+      </PropertyGroup>
     </SourceProxy>
   </ProxyGroup>
 </ServerManagerConfiguration>
