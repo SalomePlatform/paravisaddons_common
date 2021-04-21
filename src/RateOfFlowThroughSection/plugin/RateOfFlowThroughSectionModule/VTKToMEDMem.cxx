@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020  CEA/DEN, EDF R&D
+// Copyright (C) 2017-2021  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 #include "vtkAdjacentVertexIterator.h"
 #include "vtkIntArray.h"
 #include "vtkLongArray.h"
+#include "vtkLongLongArray.h"
 #include "vtkCellData.h"
 #include "vtkPointData.h"
 #include "vtkFloatArray.h"
@@ -160,6 +161,13 @@ DataArrayIdType *ConvertVTKArrayToMCArrayInt(vtkDataArray *data)
   if(d1)
     {
       const long *pt(d1->GetPointer(0));
+      std::copy(pt,pt+nbElts,ptOut);
+      return ret.retn();
+    }
+  vtkLongLongArray *d1l(vtkLongLongArray::SafeDownCast(data));
+  if(d1l)
+    {
+      const long long *pt(d1l->GetPointer(0));
       std::copy(pt,pt+nbElts,ptOut);
       return ret.retn();
     }
