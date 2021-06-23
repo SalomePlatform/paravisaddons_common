@@ -43,6 +43,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <set>
+
+constexpr char INST_TAG[] = "INST";
 
 class MyException : public std::exception
 {
@@ -87,6 +90,12 @@ private:
   T *_ptr;
 };
 
+bool PresenceOf(const std::vector<std::string> &arr, const std::string &what)
+{
+  auto pos = std::find(arr.begin(), arr.end(), what);
+  return pos!=arr.end();
+}
+
 vtkIdType PosOf(const std::vector<std::string> &arr, const std::string &what)
 {
   auto pos = std::find(arr.begin(), arr.end(), what);
@@ -99,22 +108,38 @@ vtkIdType PosOf(const std::vector<std::string> &arr, const std::string &what)
   return std::distance(arr.begin(), pos);
 }
 
-vtkStandardNewMacro(vtkContactReader);
-
-vtkContactReader::vtkContactReader() : FileName(NULL), ScaleFactor(0.02)
+double InstValueOf(vtkTable *table, vtkIdType iRow, vtkIdType iCol)
 {
-  this->SetNumberOfInputPorts(0);
+  vtkVariantArray *row(table->GetRow(iRow));
+  vtkVariant *elt(row->GetPointer(iCol));
+  return elt->ToDouble();
 }
 
-vtkContactReader::~vtkContactReader()
+vtkSmartPointer<vtkTable> LoadDataFromFile(const char *FileName)
 {
+  vtkNew<vtkDelimitedTextReader> reader;
+  reader->SetFileName(FileName);
+  reader->SetDetectNumericColumns(true);
+  reader->SetUseStringDelimiter(true);
+  reader->SetHaveHeaders(true);
+  reader->SetFieldDelimiterCharacters(" ");
+  reader->SetAddTabFieldDelimiter(true);
+  reader->SetMergeConsecutiveDelimiters(true);
+  reader->Update();
+  vtkTable *table(reader->GetOutput());
+  vtkSmartPointer<vtkTable> ret(table);
+  return ret;
 }
 
-int vtkContactReader::RequestInformation(vtkInformation *vtkNotUsed(request),
-                                         vtkInformationVector **vtkNotUsed(inputVector),
-                                         vtkInformationVector *outputVector)
+std::vector<std::string> GetColumnNames(vtkTable *table)
 {
-  return 1;
+  vtkIdType nbCols(table->GetNumberOfColumns());
+  std::vector<std::string> colNames(nbCols);
+  for (vtkIdType iCol = 0; iCol < nbCols; iCol++)
+  {
+    colNames[iCol] = table->GetColumnName(iCol);
+  }
+  return colNames;
 }
 
 void FillValue(vtkVariantArray *row, double *ptToFeed, std::size_t ipos, vtkIdType pos)
@@ -130,6 +155,48 @@ void FillValue(vtkVariantArray *row, double *ptToFeed, std::size_t ipos, vtkIdTy
   }
 }
 
+vtkStandardNewMacro(vtkContactReader);
+
+vtkContactReader::vtkContactReader() : FileName(NULL), ScaleFactor(0.02),IsTimed(false)
+{
+  this->SetNumberOfInputPorts(0);
+}
+
+vtkContactReader::~vtkContactReader()
+{
+}
+
+int vtkContactReader::RequestInformation(vtkInformation *vtkNotUsed(request),
+                                         vtkInformationVector **vtkNotUsed(inputVector),
+                                         vtkInformationVector *outputVector)
+{
+  vtkInformation *outInfo(outputVector->GetInformationObject(0));
+  //
+  vtkSmartPointer<vtkTable> table(LoadDataFromFile(this->FileName));
+  std::vector<std::string> colNames(GetColumnNames(table));
+  this->IsTimed = PresenceOf(colNames,INST_TAG);
+  vtkIdType nbRows(table->GetNumberOfRows());
+  if(!this->IsTimed)
+    return 1;
+  vtkIdType InstPos = PosOf(colNames, INST_TAG);
+  std::set<double> allInsts;
+  for (vtkIdType iRow = 0; iRow < nbRows; iRow++)
+  {
+    vtkVariantArray *row(table->GetRow(iRow));
+    vtkVariant *elt(row->GetPointer(InstPos));
+    allInsts.insert(elt->ToDouble());
+  }
+  std::vector<double> allInstsV(allInsts.begin(),allInsts.end());
+  double timeRange[2];
+  timeRange[0]=allInstsV.front();
+  timeRange[1]=allInstsV.back();
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(),allInstsV.data(),(int)allInstsV.size());
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_RANGE(),timeRange,2);
+  std::for_each(colNames.begin(),colNames.end(),[](const std::string& elt) { std::cerr << elt << " ";});
+  return 1;
+}
+
+
 int vtkContactReader::RequestData(vtkInformation *vtkNotUsed(request),
                                   vtkInformationVector **vtkNotUsed(inputVector),
                                   vtkInformationVector *outputVector)
@@ -139,32 +206,36 @@ int vtkContactReader::RequestData(vtkInformation *vtkNotUsed(request),
   //
   try
   {
-    vtkNew<vtkDelimitedTextReader> reader;
-    reader->SetFileName(this->FileName);
-    reader->SetDetectNumericColumns(true);
-    reader->SetUseStringDelimiter(true);
-    reader->SetHaveHeaders(true);
-    reader->SetFieldDelimiterCharacters(" ");
-    reader->SetAddTabFieldDelimiter(true);
-    reader->SetMergeConsecutiveDelimiters(true);
-    reader->Update();
-    vtkTable *table(reader->GetOutput());
+    vtkSmartPointer<vtkTable> table(LoadDataFromFile(this->FileName));
     vtkIdType nbRows(table->GetNumberOfRows()), nbCols(table->GetNumberOfColumns());
-    std::vector<std::string> colNames(nbCols);
-    for (vtkIdType iCol = 0; iCol < nbCols; iCol++)
-    {
-      colNames[iCol] = table->GetColumnName(iCol);
-    }
+    std::vector<std::string> colNames(GetColumnNames(table));
     vtkIdType XPos(PosOf(colNames, "X")), YPos(PosOf(colNames, "Y")), ZPos(PosOf(colNames, "Z")), DXPos(PosOf(colNames, "DX")), DYPos(PosOf(colNames, "DY")), DZPos(PosOf(colNames, "DZ"));
+    // check of presence of INST. If yes -> it means that input file is on different time steps.
+    vtkIdType InstPos(std::numeric_limits<vtkIdType>::max());
     //
     vtkSmartPointer<vtkDoubleArray> coords(vtkSmartPointer<vtkDoubleArray>::New()), vectArr(vtkSmartPointer<vtkDoubleArray>::New());
+    //
+    vtkIdType nbTuples(nbRows),startRow(0);
+    double reqTS(0.0);
+    if(this->IsTimed)
+    {
+      InstPos = PosOf(colNames, INST_TAG);
+      if(outInfo->Has(vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEP()))
+        reqTS=outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEP());
+      vtkIdType iRow = 0;
+      for (; iRow < nbRows && InstValueOf(table,iRow,InstPos)!=reqTS; iRow++);
+      startRow = iRow;
+      for (; iRow < nbRows && InstValueOf(table,iRow,InstPos)==reqTS; iRow++);
+      nbTuples = iRow-startRow;
+    }
+    //
     vectArr->SetNumberOfComponents(3);
     coords->SetNumberOfComponents(3);
-    coords->SetNumberOfTuples(nbRows);
-    vectArr->SetNumberOfTuples(nbRows);
+    coords->SetNumberOfTuples(nbTuples);
+    vectArr->SetNumberOfTuples(nbTuples);
     double *ptToFeed1(coords->Begin()), *ptToFeed2(vectArr->Begin());
     const vtkIdType POS[3] = {XPos, YPos, ZPos}, DX[3] = {DXPos, DYPos, DZPos};
-    for (vtkIdType iRow = 0; iRow < nbRows; iRow++, ptToFeed1 += 3, ptToFeed2 += 3)
+    for (vtkIdType iRow = startRow; iRow < startRow+nbTuples; iRow++, ptToFeed1 += 3, ptToFeed2 += 3)
     {
       vtkVariantArray *row(table->GetRow(iRow));
       for (std::size_t ipos = 0; ipos < 3; ipos++)
@@ -199,6 +270,8 @@ int vtkContactReader::RequestData(vtkInformation *vtkNotUsed(request),
     glyph->SetScaleFactor(this->ScaleFactor);
     glyph->Update();
     output->ShallowCopy(glyph->GetOutput());
+    if(this->IsTimed)
+      output->GetInformation()->Set(vtkDataObject::DATA_TIME_STEP(),reqTS);
     output->GetPointData()->SetActiveAttribute(0, vtkDataSetAttributes::SCALARS);
     //output->ShallowCopy(ret);
   }

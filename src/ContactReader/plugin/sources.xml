@@ -25,6 +25,15 @@
           This property specifies the scale factor applied to the size of arrows.
         </Documentation>
       </DoubleVectorProperty>
+      <DoubleVectorProperty
+        name="TimestepValues"
+        repeatable="1"
+        information_only="1">
+        <TimeStepsInformationHelper />
+        <Documentation>
+          Available timestep values.
+        </Documentation>
+      </DoubleVectorProperty>
       <Hints>
         <ReaderFactory extensions="rco" file_description="Resultantes files (Plugin)" />
       </Hints>

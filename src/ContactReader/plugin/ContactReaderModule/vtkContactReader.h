@@ -43,6 +43,7 @@ protected:
 
   char *FileName;
   double ScaleFactor;
+  bool IsTimed;
 
 private:
   vtkContactReader(const vtkContactReader &) = delete;
