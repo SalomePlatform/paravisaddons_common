@@ -17,12 +17,16 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(COMPONENT_NAME PARAVISADDONS_COMMON)
-SET(TIMEOUT        120)
+SET(TEST_NAMES
+#23711_with_time
+23711_without_time
+)
 
-SUBDIRS(SerafinReader)
-SUBDIRS(ElectromagnetismFluxDisc)
-SUBDIRS(ElectromagnetismRotation)
-SUBDIRS(ElectromagnetismStreamTraceur)
-SUBDIRS(ElectromagnetismVecteur)
-SUBDIRS(ContactReader)
+FOREACH(tfile ${TEST_NAMES})
+  SET(TEST_NAME ${COMPONENT_NAME}_${tfile})
+  ADD_TEST(${TEST_NAME} python ${tfile}.py)
+  SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES
+    LABELS "${COMPONENT_NAME}"
+    TIMEOUT ${TIMEOUT}
+    )
+ENDFOREACH()

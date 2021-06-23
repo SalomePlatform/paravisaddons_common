@@ -192,7 +192,6 @@ int vtkContactReader::RequestInformation(vtkInformation *vtkNotUsed(request),
   timeRange[1]=allInstsV.back();
   outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(),allInstsV.data(),(int)allInstsV.size());
   outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_RANGE(),timeRange,2);
-  std::for_each(colNames.begin(),colNames.end(),[](const std::string& elt) { std::cerr << elt << " ";});
   return 1;
 }
 
