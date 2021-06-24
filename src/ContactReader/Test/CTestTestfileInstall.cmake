@@ -18,7 +18,7 @@
 #
 
 SET(TEST_NAMES
-#23711_with_time
+23711_with_time
 23711_without_time
 )
 
