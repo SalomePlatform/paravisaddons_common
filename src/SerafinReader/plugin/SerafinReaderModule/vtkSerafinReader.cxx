@@ -346,7 +346,7 @@ void stdSerafinReader::createIndex ()
                               - 2*index->FieldSize
                               - (this->index->IntSize*ndp*nelem+2*this->index->TagSize);
   // Index to data
-  this->index->DataPosision = (this->index->FileSize) - (this->index->DataSize);
+  this->index->DataPosition = (this->index->FileSize) - (this->index->DataSize);
 
   // Index of Y coordinates
   this->index->YPosition = this->index->XPosition + this->index->FieldSize;
@@ -357,7 +357,6 @@ void stdSerafinReader::createIndex ()
 
 
   this->index->NumberOfDate     = (this->index->DataSize)/(this->index->DataBlocSize);
-  //vtkDebugMacro(<< "Number of Date: " << this->index->NumberOfDate << endl);
 
 };
 
@@ -491,14 +490,13 @@ int vtkSerafinReader::RequestInformation(vtkInformation *vtkNotUsed(request),
       int i=0;
       double* TimeValues = new double[totime];
 
-      for (i=0; i<totime ;i++) {TimeValues[i] = this->Reader->GetTime(i) ;}
-
-      outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(), &TimeValues[0],  totime);
+      for (i=0; i<totime ;i++) {TimeValues[i] = this->Reader->GetTime(i) ; }
+      outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(), &TimeValues[0], totime);
 
       double timeRange[2];
       timeRange[0] = TimeValues[0];
       timeRange[1] = TimeValues[totime-1];
-      outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_RANGE(),  timeRange, 2);
+      outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_RANGE(), &timeRange[0], 2);
 
     };
   }
