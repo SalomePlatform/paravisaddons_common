@@ -47,5 +47,6 @@ reader_ds = servermanager.Fetch(reader)
 anim = GetAnimationScene()
 tk = anim.TimeKeeper
 times = tk.TimestepValues
-ref_times = [i*1.0 for i in range(10)]
-assert(times == ref_times)
+ref_times = np.array([i*1.0 for i in range(10)])
+diff = np.abs(ref_times - times)
+assert(np.all(diff <= 1e-6))

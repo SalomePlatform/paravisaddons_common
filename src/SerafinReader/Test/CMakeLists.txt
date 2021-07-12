@@ -24,6 +24,7 @@ SET(test_SerafinReader_src
   geo_dp_le.slf
   geo_sp.slf
   geo_sp_le.slf
+  result.slf
   test_SerafinReader.py
   )
 
