@@ -86,7 +86,7 @@ public:
   // Mandatory for time manipulation
   vtkSetMacro(TimeStep, int);
   vtkGetMacro(TimeStep, int);
-  int GetNumberOfTimeSteps() {this->Reader->GetTotalTime();};
+  int GetNumberOfTimeSteps() {return this->Reader->GetTotalTime();};
 
   vtkSetMacro(BuildVectors, int);
   vtkGetMacro(BuildVectors, int);
