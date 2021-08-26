@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2020  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2020  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,24 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+# Author : Yoann Audouin (EDF)
 
-SET(COMPONENT_NAME PARAVISADDONS_COMMON)
-SET(TIMEOUT        120)
+SET(test_QuadraticToLinear_src
+  test_QuadraticToLinear.py
+  )
 
-SUBDIRS(SerafinReader)
-SUBDIRS(ElectromagnetismFluxDisc)
-SUBDIRS(ElectromagnetismRotation)
-SUBDIRS(ElectromagnetismStreamTraceur)
-SUBDIRS(ElectromagnetismVecteur)
-SUBDIRS(ContactReader)
-SUBDIRS(QuadraticToLinear)
+SALOME_GENERATE_TESTS_ENVIRONMENT(tests_env)
+
+ADD_TEST(QuadraticToLinear python test_QuadraticToLinear.py)
+SET_TESTS_PROPERTIES(QuadraticToLinear PROPERTIES ENVIRONMENT "${tests_env}")
+
+#INSTALL(TARGETS test_QuadraticToLinear DESTINATION ${PARAVISADDONS_COMMON_INSTALL_BINS})
+
+# Application tests
+
+SET(TEST_INSTALL_DIRECTORY ${PARAVISADDONS_COMMON_INSTALL_TESTS}/QuadraticToLinear)
+INSTALL(FILES ${test_QuadraticToLinear_src} DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+INSTALL(FILES CTestTestfileInstall.cmake
+        DESTINATION ${TEST_INSTALL_DIRECTORY}
+        RENAME CTestTestfile.cmake)
