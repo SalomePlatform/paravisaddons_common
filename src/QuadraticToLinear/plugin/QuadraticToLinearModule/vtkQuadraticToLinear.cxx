@@ -32,6 +32,7 @@
 #include <vtkDataSetAttributes.h>
 #include <vtkDemandDrivenPipeline.h>
 #include <vtkDoubleArray.h>
+#include <vtkLongArray.h>
 #include <vtkExecutive.h>
 #include <vtkFloatArray.h>
 #include <vtkInEdgeIterator.h>
@@ -172,6 +173,48 @@ vtkSmartPointer<vtkDataArray> Reduce(const int *new2Old, int newNbPts, vtkDataAr
     {
       std::ostringstream oss;
       oss << "Only Double array managed for the moment in input !" << array->GetName();
+      throw MZCException(oss.str());
+    }
+  }
+  else if (vtkFloatArray::SafeDownCast(array))
+  {
+    vtkSmartPointer<vtkFloatArray> ret(vtkSmartPointer<vtkFloatArray>::New());
+    zeRet = ret;
+    ret->SetNumberOfComponents(nbOfCompo);
+    ret->SetNumberOfTuples(newNbPts);
+    vtkFloatArray *array1(vtkFloatArray::SafeDownCast(array));
+    if (array1)
+    {
+      const float *inpCoords(array1->GetPointer(0));
+      float *outCoords(ret->GetPointer(0));
+      for (int i = 0; i < newNbPts; i++, outCoords += nbOfCompo)
+        std::copy(inpCoords + new2Old[i] * nbOfCompo, inpCoords + (new2Old[i] + 1) * nbOfCompo, outCoords);
+    }
+    else
+    {
+      std::ostringstream oss;
+      oss << "Only Float array managed for the moment in input !" << array->GetName();
+      throw MZCException(oss.str());
+    }
+  }
+  else if (vtkLongArray::SafeDownCast(array))
+  {
+    vtkSmartPointer<vtkLongArray> ret(vtkSmartPointer<vtkLongArray>::New());
+    zeRet = ret;
+    ret->SetNumberOfComponents(nbOfCompo);
+    ret->SetNumberOfTuples(newNbPts);
+    vtkLongArray *array1(vtkLongArray::SafeDownCast(array));
+    if (array1)
+    {
+      const long *inpCoords(array1->GetPointer(0));
+      long *outCoords(ret->GetPointer(0));
+      for (int i = 0; i < newNbPts; i++, outCoords += nbOfCompo)
+        std::copy(inpCoords + new2Old[i] * nbOfCompo, inpCoords + (new2Old[i] + 1) * nbOfCompo, outCoords);
+    }
+    else
+    {
+      std::ostringstream oss;
+      oss << "Only Long array managed for the moment in input !" << array->GetName();
       throw MZCException(oss.str());
     }
   }

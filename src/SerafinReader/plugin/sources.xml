@@ -20,6 +20,16 @@
         </Documentation>
       </StringVectorProperty>
 
+      <!-- Mandatory for time dependant reader -->
+      <DoubleVectorProperty
+        name="TimestepValues"
+        information_only="1">
+        <TimeStepsInformationHelper/>
+        <Documentation>
+          Available timestep values.
+        </Documentation>
+      </DoubleVectorProperty>
+
       <IntVectorProperty name="BuildVectors"
                          command="SetBuildVectors"
                          number_of_elements="1"

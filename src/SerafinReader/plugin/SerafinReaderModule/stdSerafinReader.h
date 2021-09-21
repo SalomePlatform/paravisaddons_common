@@ -149,7 +149,7 @@ typedef struct
   int64_t ConnectivityPosition ;  // La position dans le fichier de la table de connectivité
   int64_t XPosition;      // La position dans le fichier de la table des valeurs de X
   int64_t YPosition;      // La position dans le fichier de la table des valeurs de Y
-  int64_t DataPosision;    // La position dans le fichier des blocs de données
+  int64_t DataPosition;    // La position dans le fichier des blocs de données
 
   int NumberOfDate ;    // Information sur le temps étudié
 
@@ -246,8 +246,12 @@ public:
   // Associe la date de début de simulation
   void        GetDate(SerafinDate* date)
   {
-    date->day   = this->metadata->Date[2];  date->month = this->metadata->Date[1];  date->year  = this->metadata->Date[0];
-    date->hour  = this->metadata->Date[3];  date->min   = this->metadata->Date[4];  date->sec   = this->metadata->Date[5];
+    date->day   = this->metadata->Date[2];
+    date->month = this->metadata->Date[1];
+    date->year  = this->metadata->Date[0];
+    date->hour  = this->metadata->Date[3];
+    date->min   = this->metadata->Date[4];
+    date->sec   = this->metadata->Date[5];
   };
 
   // Simplifie la lecture des informations de discrétisation
@@ -262,9 +266,11 @@ public:
   double GetTime(int timeid)
   {
     double value = 0;
-    FileStream->seekg( this->index->DataPosision + this->index->DataBlocSize * timeid ,  std::ios_base::beg ) ;
+    FileStream->seekg( this->index->DataPosition + this->index->DataBlocSize * timeid ,
+                       std::ios_base::beg ) ;
     skipReadingHeader(FileStream);
     (*this.*readFloatArray)(&(value), 1);
+
     return value;
   };
 
@@ -406,7 +412,7 @@ protected:
   int64_t GoToData(const int time)
   {
     if (time >= GetTotalTime()) return 0 ;
-    FileStream->seekg( this->index->DataPosision + this->index->DataBlocSize * time + this->index->TimeSize,  std::ios_base::beg ) ;
+    FileStream->seekg( this->index->DataPosition + this->index->DataBlocSize * time + this->index->TimeSize,  std::ios_base::beg ) ;
     return FileStream->tellg();
   };
 

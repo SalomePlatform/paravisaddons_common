@@ -18,6 +18,7 @@
 #
 
 from MEDLoader import *
+import numpy as np
 
 fname="quadratic.med"
 meshName="mesh"
@@ -64,17 +65,73 @@ mm[0]=m0 ; mm[-1]=m1 ; mm[-2]=m2
 mm.write(fname,2)
 
 #
-centerOfCloud=[newArr[:,i].accumulate(0)/len(newArr) for i in xrange(newArr.getNumberOfComponents())]
+centerOfCloud=[newArr[:,i].accumulate(0)/len(newArr) for i in range(newArr.getNumberOfComponents())]
 farr=(newArr-centerOfCloud).magnitude()
 farr[nodeIdsNotLinear]=0.
 zeMax=farr.getMaxValue()[0]
 #
-fieldName="Field"
+
+fieldName="FieldDouble"
 ff=MEDFileField1TS()
 f=MEDCouplingFieldDouble(ON_NODES) ; f.setMesh(m0) ; f.setArray(farr) ; f.setName(fieldName) ; f.setTime(0.,0,0)
 ff.setFieldNoProfileSBT(f)
 ff.write(fname,0)
-farr-=zeMax ; farr.abs() ; farr[nodeIdsNotLinear]=0.
-farr.reverse() ; f.setTime(1.,1,0)
+
+fieldName="FieldFloat"
+ff=MEDFileFloatField1TS()
+farr = DataArrayFloat(np.ones((len(farr)), dtype=np.float32))
+f=MEDCouplingFieldFloat(ON_NODES) ; f.setMesh(m0) ; f.setArray(farr) ; f.setName(fieldName) ; f.setTime(0.,0,0)
 ff.setFieldNoProfileSBT(f)
 ff.write(fname,0)
+
+fieldName="FieldInt32"
+ff=MEDFileInt32Field1TS()
+farr = DataArrayInt32(np.ones((len(farr)), dtype=np.int32))
+f=MEDCouplingFieldInt32(ON_NODES) ; f.setMesh(m0) ; f.setArray(farr) ; f.setName(fieldName) ; f.setTime(0.,0,0)
+ff.setFieldNoProfileSBT(f)
+ff.write(fname,0)
+
+fieldName="FieldInt64"
+ff=MEDFileInt64Field1TS()
+farr = DataArrayInt64(np.ones((len(farr)), dtype=np.int64))
+f=MEDCouplingFieldInt64(ON_NODES) ; f.setMesh(m0) ; f.setArray(farr) ; f.setName(fieldName) ; f.setTime(0.,0,0)
+ff.setFieldNoProfileSBT(f)
+ff.write(fname,0)
+
+
+
+
+
+
+
+#fieldName="FieldDouble"
+#f=MEDCouplingFieldDouble(ON_NODES, ONE_TIME) ; f.setMesh(m0) ; f.setArray(farr) ; f.setName(fieldName) ; f.setTime(0.,0,0)
+#farr-=zeMax ; farr.abs() ; farr[nodeIdsNotLinear]=0.
+#farr.reverse()
+#WriteFieldUsingAlreadyWrittenMesh(fname, f)
+#
+#fieldName="FieldFloat"
+#farr = DataArrayFloat(np.ones((len(farr)), dtype=np.float32))
+#f=MEDCouplingFieldFloat(ON_NODES, ONE_TIME) ; f.setMesh(m0) ; f.setArray(farr) ; f.setName(fieldName) ; f.setTime(0.,0,0)
+#WriteFieldUsingAlreadyWrittenMesh(fname, f)
+#
+#fieldName="FieldInt32"
+#farr = DataArrayInt32(np.ones((len(farr)), dtype=np.int32))
+#f=MEDCouplingFieldInt32(ON_NODES, ONE_TIME) ; f.setMesh(m0) ; f.setArray(farr) ; f.setName(fieldName) ; f.setTime(0.,0,0)
+#WriteFieldUsingAlreadyWrittenMesh(fname, f)
+
+#fieldName="FieldInt64"
+#farr = DataArrayInt64(np.ones((len(farr)), dtype=np.int64))
+#f=MEDCouplingFieldInt64(ON_NODES, ONE_TIME) ; f.setMesh(m0) ; f.setArray(farr) ; f.setName(fieldName) ; f.setTime(0.,0,0)
+#WriteField(fname, f, True)
+
+from paraview.simple import *
+
+quadraticmed = MEDReader(registrationName=fname, FileName=fname)
+quadraticmed.AllArrays = ['TS0/mesh/ComSup0/FieldDouble@@][@@P1', 'TS0/mesh/ComSup0/FieldFloat@@][@@P1', 'TS0/mesh/ComSup0/FieldInt32@@][@@P1']
+quadraticmed.AllTimeSteps = ['0000']
+
+quadraticmed.UpdatePipeline()
+
+quadraticToLinear1 = QuadraticToLinear(registrationName='QuadraticToLinear1', Input=quadraticmed)
+quadraticToLinear1.UpdatePipeline()

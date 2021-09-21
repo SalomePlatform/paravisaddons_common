@@ -37,3 +37,16 @@ assert(np.all(data <= 1e-8))
 reader = SerafinReader(FileName='geo_3d_dp.slf')
 reader.UpdatePipeline()
 reader_ds = servermanager.Fetch(reader)
+
+# Reading file with time steps (10)
+reader = SerafinReader(FileName='result.slf')
+reader.UpdatePipeline()
+reader_ds = servermanager.Fetch(reader)
+
+# Using animationScene to get tim information
+anim = GetAnimationScene()
+tk = anim.TimeKeeper
+times = tk.TimestepValues
+ref_times = np.array([i*1.0 for i in range(10)])
+diff = np.abs(ref_times - times)
+assert(np.all(diff <= 1e-6))

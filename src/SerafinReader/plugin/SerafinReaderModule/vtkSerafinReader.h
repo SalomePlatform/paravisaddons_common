@@ -83,6 +83,11 @@ public:
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
 
+  // Mandatory for time manipulation
+  vtkSetMacro(TimeStep, int);
+  vtkGetMacro(TimeStep, int);
+  int GetNumberOfTimeSteps() {return this->Reader->GetTotalTime();};
+
   vtkSetMacro(BuildVectors, int);
   vtkGetMacro(BuildVectors, int);
 
