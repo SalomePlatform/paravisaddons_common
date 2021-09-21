@@ -41,6 +41,7 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkVariant.h>
 #include <vtkVariantArray.h>
+#include <vtkWarpVector.h>
 
 //-----------------------------------------------------------------------------
 void vtkRosetteCIH::ExtractInfo(
@@ -408,7 +409,7 @@ void vtkRosetteCIH::PostTraitementOnlyOneCompo(vtkUnstructuredGrid* usgIn,
 
   vtkNew<vtkPolyDataNormals> normals;
   normals->ComputeCellNormalsOn();
-  normals->ComputePointNormalsOff();
+  normals->ComputePointNormalsOn();
   normals->SplittingOff();
   normals->SetInputConnection(surface->GetOutputPort());
   normals->Update();
@@ -423,8 +424,14 @@ void vtkRosetteCIH::PostTraitementOnlyOneCompo(vtkUnstructuredGrid* usgIn,
 
   normals->GetOutput()->GetCellData()->AddArray(savedNormalsArray);
 
+  vtkNew<vtkWarpVector> warp;
+  warp->SetInputConnection(normals->GetOutputPort());
+  warp->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, "Normals");
+  warp->SetScaleFactor(normals->GetOutput()->GetLength()/1000);
+  warp->Update();
+
   vtkNew<vtkPVGlyphFilter> glyph;
-  glyph->SetInputConnection(normals->GetOutputPort());
+  glyph->SetInputConnection(warp->GetOutputPort());
   glyph->SetGlyphMode(0);       // vtkPVGlyphFilter::ALL_POINTS
   glyph->SetVectorScaleMode(0); // vtkPVGlyphFilter::SCALE_BY_MAGNITUDE
   glyph->SetSourceConnection(arrow->GetOutputPort());
