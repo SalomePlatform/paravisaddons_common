@@ -702,7 +702,10 @@ vtkSmartPointer<vtkTable> ComputeTorseurCIH(vtkUnstructuredGrid* usgIn)
     F_y = ForceBuilder({ 3, 1, 5 }, matrix, eqn);
     F_z = ForceBuilder({ 4, 5, 2 }, matrix, eqn);
   }
+  //
+  //
   MCAuto<DataArrayDouble> F(DataArrayDouble::Meld({ F_x, F_y, F_z }));
+  F->multiplyEqual(area_vector);
   double ZeForce[3], normalFace[3];
   F->accumulate(ZeForce);
   eqn->accumulate(normalFace);

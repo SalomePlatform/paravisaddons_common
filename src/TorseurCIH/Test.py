@@ -40,11 +40,16 @@ def fff(initialVect,normalFace,OM,area_field):
     for expo in range(5):
         pos,p,v = fffff(initialVect,normalFace,OM,area_field,[pos+i*(10**-expo) for i in range(-9,10)])
     return pos,p,v
-    
-fname = "slice.med"
+
+"""
+EDF24091 : probleme de calcul dans TorseurCIH
+"""
+
+fname = "Case_22_09_21.med"
+fieldName = "LIN_____SIEF_NOEU"
 mm=MEDFileMesh.New(fname)
 m=mm[0]
-f1ts = MEDFileField1TS(fname,"RESUME__SIEF_NOEU")
+f1ts = MEDFileField1TS(fname,fieldName)
 f = f1ts.field(mm)
 m = f.getMesh()
 area_field = m.getMeasureField(True)
@@ -69,6 +74,7 @@ F_y = matrix[:,3]*eqn[:,0] + matrix[:,1]*eqn[:,1] + matrix[:,5]*eqn[:,2]
 F_z = matrix[:,4]*eqn[:,0] + matrix[:,5]*eqn[:,1] + matrix[:,2]*eqn[:,2]
 #
 F = DataArrayDouble.Meld([F_x,F_y,F_z])
+F[:] *= area_vector
 #
 ZeForce = DataArrayDouble(F.accumulate(),1,3)
 normalFace = DataArrayDouble(eqn.accumulate(),1,3)
@@ -120,3 +126,5 @@ f.setArray(new_dist_to_base_X)
 f.setName("dist")
 f.writeVTK("distEig.vtu")"""
 #mat*w[:,0]
+
+print("{:g}".format(ForceNormale[0,0]))
