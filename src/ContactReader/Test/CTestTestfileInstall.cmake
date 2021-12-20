@@ -20,6 +20,7 @@
 SET(TEST_NAMES
 23711_with_time
 23711_without_time
+24319_withcomment
 )
 
 FOREACH(tfile ${TEST_NAMES})

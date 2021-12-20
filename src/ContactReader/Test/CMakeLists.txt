@@ -23,6 +23,9 @@ SET(test_contactreader_0
   23711_with_time.rco
   23711_without_time.py
   23711_without_time.rco
+  24319_withcomment.py
+  24319_with_comments.rco
+  24319_no_comment.rco
   )
 
 # Application tests

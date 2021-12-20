@@ -59,6 +59,86 @@ private:
   std::string _what;
 };
 
+#include <iostream>
+
+#ifndef WIN32
+#include <sys/types.h>
+#include <unistd.h>
+#else
+#include <process.h>
+#include <IO.h>
+#include <stdio.h>
+#define getpid _getpid
+#define unlink _unlink
+#endif
+
+/*!
+ * Class to deal with destruction of temporaty file if any. A temporary file is created when presence of comments is detected (presence of #)
+ */
+class AutoDezinger
+{
+public:
+  AutoDezinger(bool newFileToKill, const std::string& fileName):_newFileToKill(newFileToKill),_fileName(fileName) { }
+  std::string getFileName() const { return _fileName; }
+  void print() const
+  {
+    if(_newFileToKill)
+    {
+      std::cout << "A new file has been created : " << _fileName << std::endl;
+    }
+    else
+    {
+      std::cout << "File remains untouched : " << _fileName << std::endl;
+    }
+  }
+  ~AutoDezinger()
+  {
+    if(_newFileToKill)
+      unlink(_fileName.c_str());
+  }
+private:
+  bool _newFileToKill;
+  std::string _fileName;
+};
+
+std::string generateTmpFileName(const std::string& fileName)
+{
+  auto pos = fileName.find_last_of('.');
+  if(pos == std::string::npos)
+    throw MyException("generateTmpFileName : impossible to find an extention");
+  std::string tmpFileName(fileName.substr(0,pos));
+  std::ostringstream oss; oss << tmpFileName << "_tmp201221_" << getpid() << fileName.substr(pos);
+  return oss.str();
+}
+
+AutoDezinger patchRCOFile(const char *fileName)
+{
+  std::ifstream ifs(fileName);
+  std::string line;
+  bool endOfCommentsReached(false), presenceOfCommentsToSkip(false);
+  std::vector<std::string> linesWithoutComment;
+  while( std::getline(ifs,line) )
+  {
+    if(!endOfCommentsReached)
+    {
+      auto pos = line.find_first_of('#');
+      if(pos==0)// presence of # at first place -> skip it
+        { presenceOfCommentsToSkip = true; continue; }
+      else
+        { endOfCommentsReached = true; }
+    }
+    linesWithoutComment.emplace_back(line);
+  }
+  if(!presenceOfCommentsToSkip)
+    return AutoDezinger(false,fileName);
+  std::string fileNameForDelTextReader = generateTmpFileName(fileName);
+  std::ofstream ofs(fileNameForDelTextReader);
+  for(const auto& line : linesWithoutComment)
+    ofs << line << std::endl;
+  return AutoDezinger(true,fileNameForDelTextReader);
+}
+
+
 template <class T>
 class AutoPtr
 {
@@ -117,8 +197,10 @@ double InstValueOf(vtkTable *table, vtkIdType iRow, vtkIdType iCol)
 
 vtkSmartPointer<vtkTable> LoadDataFromFile(const char *FileName)
 {
+  // EDF24319 : get rid off comments lines
+  AutoDezinger az( patchRCOFile(FileName) );
   vtkNew<vtkDelimitedTextReader> reader;
-  reader->SetFileName(FileName);
+  reader->SetFileName(az.getFileName().c_str());
   reader->SetDetectNumericColumns(true);
   reader->SetUseStringDelimiter(true);
   reader->SetHaveHeaders(true);
