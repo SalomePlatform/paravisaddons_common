@@ -42,7 +42,7 @@
 #include <vtkInformationDataObjectMetaDataKey.h>
 #include <vtkInformationStringKey.h>
 #include <vtkInformationVector.h>
-#include <vtkIntArray.h>
+#include <vtkLongArray.h>
 #include <vtkMultiBlockDataSet.h>
 #include <vtkMutableDirectedGraph.h>
 #include <vtkObjectFactory.h>
@@ -381,7 +381,7 @@ vtkDataSet* FilterFamilies(vtkZJFilter* zeBoss, vtkDataSet* input, const std::se
   if (!da)
     return 0;
   std::string daName(da->GetName());
-  vtkIntArray* dai(vtkIntArray::SafeDownCast(da));
+  vtkLongArray* dai(vtkLongArray::SafeDownCast(da));
   if (daName != arrNameOfFamilyField || !dai)
     return 0;
   //
@@ -391,7 +391,7 @@ vtkDataSet* FilterFamilies(vtkZJFilter* zeBoss, vtkDataSet* input, const std::se
   zeSelection->SetNumberOfComponents(1);
   char* pt(new char[nbOfTuples]);
   zeSelection->SetArray(pt, nbOfTuples, 0, VTK_DATA_ARRAY_DELETE);
-  const int* inPtr(dai->GetPointer(0));
+  const long* inPtr(dai->GetPointer(0));
   std::fill(pt, pt + nbOfTuples, 0);
   catchAll = true;
   catchSmth = false;
@@ -527,12 +527,12 @@ int vtkZJFilter::RequestData(
         //
         vtkSmartPointer<vtkDataSet> ds(FilterFamilies(this, usgIn, zeIds));
         {
-          vtkNew<vtkIntArray> arr;
+          vtkNew<vtkLongArray> arr;
           arr->SetName((*it).c_str());
           arr->SetNumberOfComponents(1);
           int nbTuples(ds->GetNumberOfCells());
           arr->SetNumberOfTuples(nbTuples);
-          int* pt(arr->GetPointer(0));
+          long* pt(arr->GetPointer(0));
           std::fill(pt, pt + nbTuples, ids[i]);
           ds->GetCellData()->AddArray(arr);
         }
