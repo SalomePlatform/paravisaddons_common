@@ -187,11 +187,11 @@ public:
 
   // Renvoie 1 si le fichier est un fichier serafin 3D
 
-  int Is3D = 0;
+  int Is3D = -1;
 
   int Is3Dfile ()
   {
-    if (this->Is3D == 0) {
+    if (this->Is3D == -1) {
       int id;
       char name[VAR_DESC_SIZE+1];
       this->Is3D = 0;
@@ -200,7 +200,7 @@ public:
         if (strstr ( name, "ELEVATION") != NULL \
             ||  strstr (name, "COTE Z") != NULL ) {
           this->Is3D = 1;
-          return this->Is3D;
+          break;
         }
       }
    }

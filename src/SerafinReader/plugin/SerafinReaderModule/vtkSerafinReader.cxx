@@ -546,8 +546,8 @@ int vtkSerafinReader::RequestData(vtkInformation *vtkNotUsed(request),
 
   //vtkDebugMacro( << "Reading Time " << this->TimeStep << endl);
 
-  // Lecture de la geometrie
-  if(!this->Internal->hasGeometryAlreadyRead())
+  // Lecture de la geometrie (A chaque pas de temps si on est en 3D)
+  if(!this->Internal->hasGeometryAlreadyRead() || this->Reader->Is3Dfile())
     this->ReadGeometry(Internal->getPointer(), this->TimeStep);
   Internal->geometryHasBeenRead();
   output->ShallowCopy(Internal->getPointer());
