@@ -29,11 +29,3 @@ vtk_module_add_module(TorseurCIHModule
   FORCE_STATIC
   CLASSES ${classes}
 )
-
-target_include_directories(TorseurCIHModule PRIVATE ${MEDCOUPLING_INCLUDE_DIRS})
-
-if(HDF5_IS_PARALLEL)
-  target_link_libraries(TorseurCIHModule PRIVATE ${MEDCoupling_paramedloader})
-else()
-  target_link_libraries(TorseurCIHModule PRIVATE ${MEDCoupling_medloader})
-endif()
