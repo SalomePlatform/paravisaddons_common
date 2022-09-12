@@ -241,7 +241,7 @@ public:
       }
       else
       {
-        outPD->NullPoint(ptId);
+        outPD->NullData(ptId);
       }
     }
 
@@ -597,7 +597,7 @@ int vtkMyCellDataToPointData::InterpolatePointData(vtkDataSet *input, vtkDataSet
     }
     else
     {
-      outPD->NullPoint(ptId);
+      outPD->NullData(ptId);
     }
   }
 

@@ -27,7 +27,7 @@
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
-#include <vtkCompositeDataToUnstructuredGridFilter.h>
+#include <vtkMergeBlocks.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
