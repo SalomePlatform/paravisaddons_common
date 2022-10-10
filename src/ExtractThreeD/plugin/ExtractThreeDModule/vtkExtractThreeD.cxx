@@ -166,7 +166,8 @@ vtkDataSet *FilterFamilies(vtkDataSet *input, const std::vector<int> &idsToKeep)
   vtkDataSetAttributes *dscOut(output->GetCellData()), *dscOut2(output->GetPointData());
   //
   double vMin(1.), vMax(2.);
-  thres->ThresholdBetween(vMin, vMax);
+  thres->SetUpperThreshold(vMax);
+  thres->SetLowerThreshold(vMin);
   // OK for the output
   vtkIdType nbOfCells(input->GetNumberOfCells());
   vtkCharArray *zeSelection(vtkCharArray::New());

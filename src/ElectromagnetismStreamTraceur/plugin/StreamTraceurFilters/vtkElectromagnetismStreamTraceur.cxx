@@ -21,7 +21,7 @@
 
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
-#include <vtkCompositeDataToUnstructuredGridFilter.h>
+#include <vtkMergeBlocks.h>
 #include <vtkMultiBlockDataGroupFilter.h>
 #include <vtkDoubleArray.h>
 #include <vtkInformation.h>

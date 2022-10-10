@@ -21,7 +21,7 @@
 
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
-#include <vtkCompositeDataToUnstructuredGridFilter.h>
+#include <vtkMergeBlocks.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
@@ -114,20 +114,20 @@ void vtkGlyphCIH::ExtractInfo(
     if (!input1)
     {
       vtkNew<vtkMultiBlockDataGroupFilter> mb;
-      vtkNew<vtkCompositeDataToUnstructuredGridFilter> cd;
+      vtkNew<vtkMergeBlocks> cd;
       mb->AddInputData(input);
       cd->SetInputConnection(mb->GetOutputPort());
       cd->SetMergePoints(0);
       cd->Update();
-      usgIn = cd->GetOutput();
+      usgIn = static_cast<vtkUnstructuredGrid *>(cd->GetOutput());
     }
     else
     {
-      vtkNew<vtkCompositeDataToUnstructuredGridFilter> filter;
+      vtkNew<vtkMergeBlocks> filter;
       filter->SetMergePoints(0);
       filter->SetInputData(input1);
       filter->Update();
-      usgIn = filter->GetOutput();
+      usgIn = static_cast<vtkUnstructuredGrid *>(filter->GetOutput());
     }
   }
 }

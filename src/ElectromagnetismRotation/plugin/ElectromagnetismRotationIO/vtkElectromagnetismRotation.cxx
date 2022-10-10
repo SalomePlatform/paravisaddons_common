@@ -62,7 +62,7 @@
 #include "vtkDataObjectTreeIterator.h"
 #include "vtkThreshold.h"
 #include "vtkMultiBlockDataGroupFilter.h"
-#include "vtkCompositeDataToUnstructuredGridFilter.h"
+#include "vtkMergeBlocks.h"
 #include "vtkInformationDataObjectMetaDataKey.h"
 #include "vtkTransform.h"
 #include "vtkFunctionParser.h"
@@ -219,7 +219,8 @@ vtkDataSet *FilterFamilies(vtkThreshold *thres,
   vtkDataSetAttributes *dscOut(output->GetCellData()),*dscOut2(output->GetPointData());
   //
   double vMin(insideOut==0?1.:0.),vMax(insideOut==0?2.:1.);
-  thres->ThresholdBetween(vMin,vMax);
+  thres->SetLowerThreshold(vMin);
+  thres->SetUpperThreshold(vMax);
   // OK for the output
   //
   CellPointExtractor cpe2(input);

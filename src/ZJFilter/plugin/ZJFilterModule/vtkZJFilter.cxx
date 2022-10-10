@@ -27,7 +27,7 @@
 #include <vtkCellData.h>
 #include <vtkCellType.h>
 #include <vtkCharArray.h>
-#include <vtkCompositeDataToUnstructuredGridFilter.h>
+#include <vtkMergeBlocks.h>
 #include <vtkDataArraySelection.h>
 #include <vtkAOSDataArrayTemplate.h>
 #include <vtkDataObjectTreeIterator.h>
@@ -374,7 +374,8 @@ vtkDataSet* FilterFamilies(vtkZJFilter* zeBoss, vtkDataSet* input, const std::se
   vtkDataSetAttributes *dscOut(output->GetCellData()), *dscOut2(output->GetPointData());
   //
   constexpr double vMin(1.), vMax(2.);
-  thres->ThresholdBetween(vMin, vMax);
+  thres->SetUpperThreshold(vMax);
+  thres->SetLowerThreshold(vMin);
   // OK for the output
   //
   vtkDataArray* da(input->GetCellData()->GetScalars(arrNameOfFamilyField));
@@ -539,14 +540,14 @@ int vtkZJFilter::RequestData(
         this->UpdateProgress(double(i) / double(sz));
         mb->SetBlock(i, ds);
       }
-      vtkNew<vtkCompositeDataToUnstructuredGridFilter> cd;
+      vtkNew<vtkMergeBlocks> cd;
       cd->SetInputData(mb);
       cd->SetMergePoints(0);
       cd->Update();
       mb2->SetBlock(iblock, cd->GetOutput());
     }
     {
-      vtkNew<vtkCompositeDataToUnstructuredGridFilter> cd2;
+      vtkNew<vtkMergeBlocks> cd2;
       cd2->SetInputData(mb2);
       cd2->SetMergePoints(0);
       cd2->Update();

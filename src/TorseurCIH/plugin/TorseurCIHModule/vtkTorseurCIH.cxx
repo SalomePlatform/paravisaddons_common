@@ -31,7 +31,7 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkAlgorithmOutput.h>
-#include <vtkCompositeDataToUnstructuredGridFilter.h>
+#include <vtkMergeBlocks.h>
 #include <vtkDataArraySelection.h>
 #include <vtkDataObjectTreeIterator.h>
 #include <vtkDataSet.h>
@@ -96,20 +96,20 @@ void ExtractInfo(vtkInformationVector* inputVector, vtkSmartPointer<vtkUnstructu
     if (!input1)
     {
       vtkNew<vtkMultiBlockDataGroupFilter> mb;
-      vtkNew<vtkCompositeDataToUnstructuredGridFilter> cd;
+      vtkNew<vtkMergeBlocks> cd;
       mb->AddInputData(input);
       cd->SetInputConnection(mb->GetOutputPort());
       cd->SetMergePoints(0);
       cd->Update();
-      usgIn = cd->GetOutput();
+      usgIn = static_cast<vtkUnstructuredGrid*>(cd->GetOutput());
     }
     else
     {
-      vtkNew<vtkCompositeDataToUnstructuredGridFilter> filter;
+      vtkNew<vtkMergeBlocks> filter;
       filter->SetMergePoints(0);
       filter->SetInputData(input1);
       filter->Update();
-      vtkUnstructuredGrid* res(filter->GetOutput());
+      vtkUnstructuredGrid* res(static_cast<vtkUnstructuredGrid*>(filter->GetOutput()));
       usgIn.TakeReference(res);
       if (res)
         res->Register(nullptr);
