@@ -35,7 +35,7 @@ public:
   int FillOutputPortInformation(int port, vtkInformation* info) override;
 
 protected:
-  vtkTorseurCIH() = default;
+  vtkTorseurCIH();
   ~vtkTorseurCIH() override = default;
 
   int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;

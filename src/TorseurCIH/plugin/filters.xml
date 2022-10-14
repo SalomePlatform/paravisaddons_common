@@ -2,7 +2,7 @@
   <ProxyGroup name="filters">
     <SourceProxy name="TorseurCIH"
                  class="vtkTorseurCIH"
-                 label="Torseur CIH">
+                 label="Torseur">
       <InputProperty name="Input"
                      command="SetInputConnection">
         <ProxyGroupDomain name="groups">
