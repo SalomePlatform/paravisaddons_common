@@ -90,7 +90,7 @@ const char GLOBAL_NODE_ID_NAME[]="GlobalNodeIds";
 
 vtkStandardNewMacro(vtkElectromagnetismRotation);
 
-vtkInformationDataObjectMetaDataKey* GetMEDReaderMetaDataIfAny()
+static vtkInformationDataObjectMetaDataKey* GetMEDReaderMetaDataIfAny()
 {
   static const char ZE_KEY[] = "vtkMEDReader::META_DATA";
   MEDCoupling::GlobalDict* gd(MEDCoupling::GlobalDict::GetInstance());
