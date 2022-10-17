@@ -32,9 +32,9 @@ f2.setArray( arrf2 )
 f2.setName("field2")
 WriteFieldUsingAlreadyWrittenMesh(fname,f2)
 
-testmed = MEDReader(FileName=fname)
-testmed.AllArrays = ['TS0/mesh/ComSup0/field@@][@@P0', 'TS0/mesh/ComSup0/field2@@][@@P0', 'TS0/mesh/ComSup0/mesh@@][@@P0']
-testmed.AllTimeSteps = ['0000']
+testmed = MEDReader(FileNames=fname)
+testmed.FieldsStatus = ['TS0/mesh/ComSup0/field@@][@@P0', 'TS0/mesh/ComSup0/field2@@][@@P0', 'TS0/mesh/ComSup0/mesh@@][@@P0']
+testmed.TimesFlagsStatus = ['0000']
 streamTraceur1 = LigneDeChamp(Input=testmed,SeedType='Point Cloud')
 streamTraceur1.SeedType.Radius = 1
 streamTraceur1.SeedType.Center = [ 7.23,7.26,3.42 ]

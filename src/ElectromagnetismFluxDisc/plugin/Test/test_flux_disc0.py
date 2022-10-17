@@ -55,9 +55,9 @@ ref_flux_hsomega = 1896.991081794051
 vector = [0.13,-0.47,0.87]
 center = [0.0, 0.0, 3900.0]
 
-mr = MEDReader(FileName='/home/H87074/TMP81/paravistests_new/FilesForTests/Electromagnetism/mesh_benjamin_8_sept_2020.med')
-mr.AllArrays = ['TS0/Mesh_1/ComSup0/B_A@@][@@P0', 'TS0/Mesh_1/ComSup0/B_HsOmega@@][@@P0', 'TS0/Mesh_1/ComSup0/H_A@@][@@P0', 'TS0/Mesh_1/ComSup0/H_HsOmega@@][@@P0']
-mr.AllTimeSteps = ['0000', '0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009']
+mr = MEDReader(FileNames='/home/H87074/TMP81/paravistests_new/FilesForTests/Electromagnetism/mesh_benjamin_8_sept_2020.med')
+mr.FieldsStatus = ['TS0/Mesh_1/ComSup0/B_A@@][@@P0', 'TS0/Mesh_1/ComSup0/B_HsOmega@@][@@P0', 'TS0/Mesh_1/ComSup0/H_A@@][@@P0', 'TS0/Mesh_1/ComSup0/H_HsOmega@@][@@P0']
+mr.TimesFlagsStatus = ['0000', '0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009']
 mr.UpdatePipeline()
 
 resRadial = 200

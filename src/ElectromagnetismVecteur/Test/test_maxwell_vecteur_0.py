@@ -32,9 +32,9 @@ mc.WriteFieldUsingAlreadyWrittenMesh(fileName,f2)
 
 # fin de la generation du fichier MED on attaque le test a proprement parler
 
-testmed = MEDReader(FileName=fileName)
-testmed.AllArrays = ['TS0/mesh/ComSup0/field@@][@@P0', 'TS0/mesh/ComSup0/field2@@][@@P0', 'TS0/mesh/ComSup0/mesh@@][@@P0']
-testmed.AllTimeSteps = ['0000']
+testmed = MEDReader(FileNames=fileName)
+testmed.FieldsStatus = ['TS0/mesh/ComSup0/field@@][@@P0', 'TS0/mesh/ComSup0/field2@@][@@P0', 'TS0/mesh/ComSup0/mesh@@][@@P0']
+testmed.TimesFlagsStatus = ['0000']
 
 vecteur1 = Vecteur(Input=testmed)
 fieldName = "field"

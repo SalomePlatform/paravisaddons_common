@@ -7,8 +7,8 @@ def MyAssert(clue):
         raise RuntimeError("Assertion failed !")
 
 fileName="mesh_benjamin_8_sept_2020.med"
-testmed = MEDReader(FileName=fileName)
-testmed.AllArrays = ['TS0/Mesh_1/ComSup0/B_A@@][@@P0', 'TS0/Mesh_1/ComSup0/B_HsOmega@@][@@P0', 'TS0/Mesh_1/ComSup0/H_A@@][@@P0', 'TS0/Mesh_1/ComSup0/H_HsOmega@@][@@P0']
+testmed = MEDReader(FileNames=fileName)
+testmed.FieldsStatus = ['TS0/Mesh_1/ComSup0/B_A@@][@@P0', 'TS0/Mesh_1/ComSup0/B_HsOmega@@][@@P0', 'TS0/Mesh_1/ComSup0/H_A@@][@@P0', 'TS0/Mesh_1/ComSup0/H_HsOmega@@][@@P0']
 testmed.UpdatePipeline()
 
 animationScene1 = GetAnimationScene()

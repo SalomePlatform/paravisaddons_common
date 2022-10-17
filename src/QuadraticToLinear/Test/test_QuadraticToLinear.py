@@ -127,9 +127,9 @@ ff.write(fname,0)
 
 from paraview.simple import *
 
-quadraticmed = MEDReader(registrationName=fname, FileName=fname)
-quadraticmed.AllArrays = ['TS0/mesh/ComSup0/FieldDouble@@][@@P1', 'TS0/mesh/ComSup0/FieldFloat@@][@@P1', 'TS0/mesh/ComSup0/FieldInt32@@][@@P1']
-quadraticmed.AllTimeSteps = ['0000']
+quadraticmed = MEDReader(registrationName=fname, FileNames=fname)
+quadraticmed.FieldsStatus = ['TS0/mesh/ComSup0/FieldDouble@@][@@P1', 'TS0/mesh/ComSup0/FieldFloat@@][@@P1', 'TS0/mesh/ComSup0/FieldInt32@@][@@P1']
+quadraticmed.TimesFlagsStatus = ['0000']
 
 quadraticmed.UpdatePipeline()
 

@@ -23,9 +23,9 @@ from paraview.simple import *
 paraview.simple._DisableFirstRenderCameraReset()
 
 # create a new 'MED Reader'
-#f3d_gouttedomed = MEDReader(FileName='/home/H87074/TMP52/f3d_gouttedo.med')
-#f3d_gouttedomed.AllArrays = ['TS0/MESH/ComSup0/COTE Z@@][@@P1', 'TS0/MESH/ComSup0/VITESSE U@@][@@P1', 'TS0/MESH/ComSup0/VITESSE V@@][@@P1', 'TS0/MESH/ComSup0/VITESSE W@@][@@P1']
-#f3d_gouttedomed.AllTimeSteps = ['0000', '0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '00010']
+#f3d_gouttedomed = MEDReader(FileNames='/home/H87074/TMP52/f3d_gouttedo.med')
+#f3d_gouttedomed.FieldsStatus = ['TS0/MESH/ComSup0/COTE Z@@][@@P1', 'TS0/MESH/ComSup0/VITESSE U@@][@@P1', 'TS0/MESH/ComSup0/VITESSE V@@][@@P1', 'TS0/MESH/ComSup0/VITESSE W@@][@@P1']
+#f3d_gouttedomed.TimesFlagsStatus = ['0000', '0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '00010']
 
 source = GetActiveSource()
 renderView1 = GetActiveViewOrCreate('RenderView')
