@@ -40,7 +40,7 @@ vtkCxxSetObjectMacro(vtkPVMetaDataInformationERIO, InformationData, vtkDataObjec
 
 static vtkInformationDataObjectMetaDataKey* GetMEDReaderMetaDataIfAny()
 {
-  static const char ZE_KEY[] = "vtkMEDReader::META_DATA";
+  static const char ZE_KEY[] = "vtkFileSeriesGroupReader::META_DATA";
   MEDCoupling::GlobalDict* gd(MEDCoupling::GlobalDict::GetInstance());
   if (!gd->hasKey(ZE_KEY))
     return 0;

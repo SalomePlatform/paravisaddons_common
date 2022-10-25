@@ -248,7 +248,7 @@ int vtkRateOfFlowThroughSection::RequestInformation(vtkInformation *request, vtk
 
 static MEDCoupling::MCAuto<MEDCoupling::MEDCouplingUMesh> ToMedcoupling(MEDCoupling::MCAuto<MEDCoupling::MEDFileData> &mfd, vtkDataSet *usgIn)
 {
-  WriteMEDFileFromVTKDataSet(mfd, usgIn, {}, 0., 0);
+  VTKToMEDMemRateOfFlow::WriteMEDFileFromVTKDataSet(mfd, usgIn, {}, 0., 0);
   MEDCoupling::MEDFileMeshes *ms(mfd->getMeshes());
   if (ms->getNumberOfMeshes() != 1)
     throw INTERP_KERNEL::Exception("Unexpected number of meshes !");
