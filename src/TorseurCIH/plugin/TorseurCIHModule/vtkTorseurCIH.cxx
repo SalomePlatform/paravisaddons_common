@@ -48,6 +48,7 @@
 #include <vtkInformationStringKey.h>
 #include <vtkInformationVector.h>
 #include <vtkLongArray.h>
+#include <vtkUnsignedCharArray.h>
 #include <vtkMultiBlockDataGroupFilter.h>
 #include <vtkMultiBlockDataSet.h>
 #include <vtkMutableDirectedGraph.h>
@@ -55,6 +56,7 @@
 #include <vtkQuadratureSchemeDefinition.h>
 #include <vtkStringArray.h>
 #include <vtkTable.h>
+#include <vtkThreshold.h>
 #include <vtkUnsignedCharArray.h>
 
 #include "InterpKernelAutoPtr.hxx"
@@ -326,54 +328,26 @@ vtkSmartPointer<vtkUnstructuredGrid> BuildFromPtCloud(DataArrayDouble *pts)
 
 vtkSmartPointer<vtkUnstructuredGrid> BuildPart(vtkUnstructuredGrid *ds, const mcIdType *beginPtr, const mcIdType *endPtr)
 {
-  vtkSmartPointer<vtkUnstructuredGrid> ret(vtkSmartPointer<vtkUnstructuredGrid>::New());
-  ret->Initialize();
-  ret->Allocate();
-  ret->SetPoints( ds->GetPoints() );
-  vtkIdType inputNbCells( ds->GetNumberOfCells() );
-  std::size_t nbCells( std::distance(beginPtr,endPtr) );
-  vtkSmartPointer<vtkUnsignedCharArray> cellTypes(vtkSmartPointer<vtkUnsignedCharArray>::New());
-  cellTypes->SetNumberOfComponents(1);
-  cellTypes->SetNumberOfTuples(nbCells);
-  vtkSmartPointer<vtkIdTypeArray> cellLocations(vtkSmartPointer<vtkIdTypeArray>::New());
-  vtkIdType *cPtr(nullptr), *dPtr(nullptr);
-  unsigned char * tPtr( cellTypes->GetPointer(0) );
-  cellLocations->SetNumberOfComponents(1);
-  cellLocations->SetNumberOfTuples(nbCells);
-  cPtr = cellLocations->GetPointer(0);
-  vtkSmartPointer<vtkIdTypeArray> cells(vtkSmartPointer<vtkIdTypeArray>::New());
-  // input data
-  vtkIdType *cinPtr( static_cast<vtkIdTypeArray *>(ds->GetCells()->GetConnectivityArray())->GetPointer(0) );
-  vtkIdType *dinPtr( static_cast<vtkIdTypeArray *>(ds->GetCells()->GetOffsetsArray())->GetPointer(0) );
-  unsigned char *tinPtr( ds->GetCellTypesArray()->GetPointer(0) );
-  vtkIdType szOfConnectivityOut(0);
-  //
-  for(const mcIdType *pt = beginPtr ; pt != endPtr ; ++pt)
-  {
-    vtkIdType pPlusOne = *pt != inputNbCells-1 ? dinPtr[*pt+1] : ds->GetCells()->GetConnectivityArray()->GetNumberOfTuples();
-    szOfConnectivityOut += pPlusOne - dinPtr[*pt] + 1;
-  }
-  //
-  {
-    cells->SetNumberOfComponents(1);
-    cells->SetNumberOfTuples(szOfConnectivityOut);
-    dPtr = cells->GetPointer(0);
-  }
-  //
-  mcIdType k(0);
-  for(const mcIdType *pt = beginPtr ; pt != endPtr ; ++pt)
-  {
-    vtkIdType pPlusOne = *pt != inputNbCells-1 ? dinPtr[*pt+1] : ds->GetCells()->GetConnectivityArray()->GetNumberOfTuples();
-    *dPtr++ = pPlusOne - dinPtr[*pt];
-    dPtr = std::copy(cinPtr + dinPtr[*pt], cinPtr + pPlusOne, dPtr);
-    *cPtr++ = k;
-    k += pPlusOne - dinPtr[*pt] + 1;
-    *tPtr++ = tinPtr[*pt];
-  }
-  //
-  vtkSmartPointer<vtkCellArray> cells2(vtkSmartPointer<vtkCellArray>::New());
-  cells2->SetCells(nbCells, cells);
-  ret->SetCells(cellTypes, cellLocations, cells2);
+  constexpr char INOUT_NAME[]="InOutPPP";
+  vtkSmartPointer<vtkUnstructuredGrid> ret,dsCpy(vtkSmartPointer<vtkUnstructuredGrid>::New());
+  dsCpy->ShallowCopy(ds);
+  vtkSmartPointer<vtkUnsignedCharArray> inOrOut(vtkSmartPointer<vtkUnsignedCharArray>::New());
+  inOrOut->SetNumberOfComponents(1);
+  auto nbCells = ds->GetNumberOfCells();
+  inOrOut->SetNumberOfTuples(nbCells);
+  std::for_each(inOrOut->Begin(),inOrOut->End(),[](unsigned char& elt) { elt = 0; });
+  unsigned char *pt(inOrOut->GetPointer(0));
+  std::for_each(beginPtr,endPtr,[pt](mcIdType elt) { pt[elt] = 2; });
+  inOrOut->SetName(INOUT_NAME);
+  dsCpy->GetCellData()->AddArray(inOrOut);
+  vtkSmartPointer<vtkThreshold> thres(vtkSmartPointer<vtkThreshold>::New());
+  thres->SetInputData(dsCpy);
+  thres->SetLowerThreshold(1.0);
+  thres->SetUpperThreshold(3.0);
+  thres->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,INOUT_NAME);
+  thres->Update();
+  ret.TakeReference( thres->GetOutput() );
+  ret->Register(nullptr);
   return ret;
 }
 
@@ -811,7 +785,27 @@ vtkSmartPointer< vtkUnstructuredGrid >& baryVTK)
   FXYZ->SetName( "FXYZ" );
   ugLev0->GetCellData()->AddArray(FXYZ);
   //
-  F->multiplyEqual(area_vector);
+  F->multiplyEqual(area_field_ids);
+  //
+  {
+    MCAuto<DataArrayDouble> F_Normal,F_Tangent;
+    {
+      MCAuto<DataArrayDouble> F_Normal_norm(DataArrayDouble::Dot(F,eqn));
+      F_Normal = DataArrayDouble::Multiply(eqn,F_Normal_norm);
+      F_Tangent = DataArrayDouble::Substract(F,F_Normal);
+    }
+    {
+      vtkSmartPointer<vtkDoubleArray> F_Normal_VTK = ConvertMCArrayToVTKArray(F_Normal);
+      F_Normal_VTK->SetName("F_Normal");
+      ugLev0->GetCellData()->AddArray(F_Normal_VTK);
+    }
+    {
+      vtkSmartPointer<vtkDoubleArray> F_Tangent_VTK = ConvertMCArrayToVTKArray(F_Tangent);
+      F_Tangent_VTK->SetName("F_Tangent");
+      ugLev0->GetCellData()->AddArray(F_Tangent_VTK);
+    }
+  }
+  //
   double ZeForce[3], normalFace[3];
   F->accumulate(ZeForce);
   eqn->accumulate(normalFace);
