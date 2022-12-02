@@ -126,12 +126,40 @@ ff.write(fname,0)
 #WriteField(fname, f, True)
 
 from paraview.simple import *
+from paraview import servermanager as sm
+import vtk
 
 quadraticmed = MEDReader(registrationName=fname, FileNames=fname)
 quadraticmed.FieldsStatus = ['TS0/mesh/ComSup0/FieldDouble@@][@@P1', 'TS0/mesh/ComSup0/FieldFloat@@][@@P1', 'TS0/mesh/ComSup0/FieldInt32@@][@@P1']
 quadraticmed.TimesFlagsStatus = ['0000']
+quadraticmed.GhostCellGeneratorCallForPara = 0
 
 quadraticmed.UpdatePipeline()
 
 quadraticToLinear1 = QuadraticToLinear(registrationName='QuadraticToLinear1', Input=quadraticmed)
 quadraticToLinear1.UpdatePipeline()
+
+expected_range = {"FieldDouble": (0.6021032929420471, 1.9037944078445435),
+                  "FieldFloat": (1, 1),
+                  "FieldInt32": (1, 1)}
+
+# check that the filter has worked
+for fieldName in ["FieldDouble", "FieldFloat", "FieldInt32"]:
+  field = quadraticToLinear1.PointData.GetArray(fieldName)
+  assert field is not None, "quadraticToLinear1 %s is None"%fieldName
+  # check the values
+  mini, maxi = field.GetRange()
+  expected_mini, expected_maxi = expected_range[fieldName]
+  assert abs(mini-expected_mini) < 1e-12
+  assert abs(maxi-expected_maxi) < 1e-12
+
+# check the cell types
+expected_cell_types = [vtk.VTK_TETRA, vtk.VTK_WEDGE, vtk.VTK_HEXAHEDRON,
+                       vtk.VTK_TRIANGLE, vtk.VTK_QUAD, vtk.VTK_LINE]
+vtk_multiblock = sm.Fetch(quadraticToLinear1)
+vtk_unstructured = vtk_multiblock.GetBlock(0)
+nb_cells = vtk_unstructured.GetNumberOfCells()
+for cell in range(nb_cells):
+  cell_type = vtk_unstructured.GetCellType(cell)
+  expected_cell_type = expected_cell_types[cell]
+  assert cell_type == expected_cell_type

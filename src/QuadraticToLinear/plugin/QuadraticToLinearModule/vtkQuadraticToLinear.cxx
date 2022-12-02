@@ -240,7 +240,11 @@ vtkSmartPointer<vtkDataArray> Reduce(const int *new2Old, int newNbPts, vtkDataAr
     }
   }
   else
-    throw MZCException("Reduce : unmanaged type !");
+  {
+    std::ostringstream oss;
+    oss << "Reduce : unmanaged type ! Check field " << array->GetName();
+    throw MZCException(oss.str());
+  }
   for (int i = 0; i < nbOfCompo; i++)
   {
     const char *compoName(array->GetComponentName(i));
