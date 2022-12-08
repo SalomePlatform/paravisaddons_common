@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2022  CEA/DEN, EDF R&D
+# Copyright (C) 2022  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,14 +17,15 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(COMPONENT_NAME PARAVISADDONS_COMMON)
-SET(TIMEOUT        120)
+SET(test_SliceRemesh_src
+  testSliceRemesh0.py
+  )
 
-SUBDIRS(SerafinReader)
-SUBDIRS(ElectromagnetismFluxDisc)
-SUBDIRS(ElectromagnetismRotation)
-SUBDIRS(ElectromagnetismStreamTraceur)
-SUBDIRS(ElectromagnetismVecteur)
-SUBDIRS(ContactReader)
-SUBDIRS(QuadraticToLinear)
-SUBDIRS(SliceRemesh)
+# Application tests
+
+SET(TEST_INSTALL_DIRECTORY ${PARAVISADDONS_COMMON_INSTALL_TESTS}/SliceRemesh)
+INSTALL(FILES ${test_SliceRemesh_src} DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+INSTALL(FILES CTestTestfileInstall.cmake
+        DESTINATION ${TEST_INSTALL_DIRECTORY}
+        RENAME CTestTestfile.cmake)

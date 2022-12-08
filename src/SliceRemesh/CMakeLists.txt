@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2022  CEA/DEN, EDF R&D
+# Copyright (C) 2022  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,14 +17,8 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(COMPONENT_NAME PARAVISADDONS_COMMON)
-SET(TIMEOUT        120)
+install(FILES SliceRemeshPlugin.py DESTINATION lib/paraview)
 
-SUBDIRS(SerafinReader)
-SUBDIRS(ElectromagnetismFluxDisc)
-SUBDIRS(ElectromagnetismRotation)
-SUBDIRS(ElectromagnetismStreamTraceur)
-SUBDIRS(ElectromagnetismVecteur)
-SUBDIRS(ContactReader)
-SUBDIRS(QuadraticToLinear)
-SUBDIRS(SliceRemesh)
+install(FILES slice_remesh_engine.py DESTINATION bin)
+
+add_subdirectory(Test)

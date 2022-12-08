@@ -71,7 +71,7 @@ ADD_SUBDIRECTORY(ElectromagnetismVecteur)
 ADD_SUBDIRECTORY(ElectromagnetismStreamTraceur)
 ADD_SUBDIRECTORY(ElectromagnetismFluxDisc)
 ADD_SUBDIRECTORY(ElectromagnetismRotation)
-
+ADD_SUBDIRECTORY(SliceRemesh)
 
 # Tests
 configure_file(CTestTestfileInstall.cmake.in "CTestTestfileST.cmake" @ONLY)
