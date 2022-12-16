@@ -18,7 +18,7 @@
 #
 
 SET(COMPONENT_NAME PARAVISADDONS_COMMON)
-SET(TIMEOUT        120)
+SET(TIMEOUT        240)
 
 SUBDIRS(SerafinReader)
 SUBDIRS(ElectromagnetismFluxDisc)
