@@ -70,19 +70,33 @@ def ReavaluateField(curr_field, new_mesh, eps = 1e-12):
     return ret
 
 def FilterOnlyTopLevelCells( ugin2d ):
-    from paraview.simple import TrivialProducer,servermanager,ExtractCellType
-    producer = TrivialProducer()
-    producer.GetClientSideObject().SetOutput(ugin2d)
-    producer.UpdatePipeline()
-    ec = ExtractCellType(Input=producer)
-    ec.UpdatePipelineInformation()
-    allTypesStr = ec.GetProperty("GeoTypesInfo")[::2]
-    dimForEachGT = [eval("vtk.vtk{}()".format(elt)).GetCellDimension() for elt in allTypesStr]
-    dimToSelect = max( dimForEachGT )
-    typesToSelectStr = [elt for elt in allTypesStr if eval("vtk.vtk{}()".format(elt)).GetCellDimension()==dimToSelect]
-    ec.AllGeoTypes = typesToSelectStr
-    ec.UpdatePipeline()
-    ugin = servermanager.Fetch(ec)
+    import vtk
+    from vtk.util import numpy_support
+    ecbt = vtk.vtkExtractCellsByType()
+    ecbt.SetInputData( ugin2d )
+    allTypes = numpy_support.vtk_to_numpy( ugin2d.GetCellTypesArray() )
+
+    sel0 = [elt.split("_")[1] for elt in dir(vtk) if "VTK_"==elt[:4] and len(elt.split("_"))==2]
+    sel1 = ["{}{}".format(elt[0],elt[1:].lower()) for elt in sel0]
+    sel2 = [elt for elt in sel1 if "vtk{}".format(elt) in dir(vtk)]
+    sel3 = []
+    for elt in sel2:
+        try:
+            inst = eval("vtk.vtk{}()".format(elt))
+            inst.clsname = elt
+            sel3.append( inst )
+        except:
+            pass
+    sel4 = [elt for elt in sel3 if isinstance(elt,vtk.vtkCell)]
+    sel5 = {elt.GetCellType() : elt for elt in sel4}
+    if len(sel4) != len(sel5):
+        raise RuntimeError("Presence of multiple sub vtkCell instance having same CellType !")
+    dimToSelect = max([sel5[elt].GetCellDimension() for elt in allTypes])
+    ecbt.RemoveAllCellTypes()
+    for elt in [sel5[elt].GetCellType() for elt in set(allTypes)]:
+        ecbt.AddCellType(elt)
+    ecbt.Update()
+    ugin = ecbt.GetOutputDataObject(0)
     return ugin
 
 def ConvertUGToMCFields(ugin):
@@ -137,6 +151,7 @@ def EngineOfRemesh(ugin2d,ugin3d,constantSize):
     """
     uginclean2d = FilterOnlyTopLevelCells( ugin2d )
     mesh2d_mc = vtk2medcoupling.mesh_convertor_mem(uginclean2d)
+    mesh2d_mc.unPolyze()
     uginclean3d = FilterOnlyTopLevelCells( ugin3d )
     with tempfile.TemporaryDirectory() as d:
         tempFileNameIn = os.path.join(d,"inpp.med")
