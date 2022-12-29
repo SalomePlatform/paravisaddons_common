@@ -19,6 +19,9 @@
       <Hints>
         <ShowInMenu category="Mechanics" />
       </Hints>
+      <OutputPort index="0" name="Global" />
+      <OutputPort index="1" name="Forces" />
+      <OutputPort index="2" name="Barycentre" />
     </SourceProxy>
   </ProxyGroup>
 </ServerManagerConfiguration>
