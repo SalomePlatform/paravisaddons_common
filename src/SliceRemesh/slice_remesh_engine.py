@@ -142,16 +142,18 @@ def ConvertMCFieldToVTKUG( mcfields ):
         dsRet.GetPointData().AddArray( ds.GetPointData().GetArray(0) )
     return dsRet
 
-def EngineOfRemesh(ugin2d,ugin3d,constantSize):
+def EngineOfRemesh(ugin2d,ugin3d,constantSize,mergeNodesTol):
     """
     :param ugin2d: 2D dataset that will be remeshed. Arrays included in ugin2d are simply ignored only cells/points are considered.
     :type ugin2d: vtk.vtkUnstructuredGrid
     :param ugin3d: 3D dataset used to resample values in the remeshed 2D mesh ugin2d.
     :param constantSize: Float indicating the size of cells to be generated
+    :param mergeNodesTol: Float indicating the tolerance below which nodes in ugin2d will be merged.
     """
     uginclean2d = FilterOnlyTopLevelCells( ugin2d )
     mesh2d_mc = vtk2medcoupling.mesh_convertor_mem(uginclean2d)
     mesh2d_mc.unPolyze()
+    mesh2d_mc.mergeNodes(mergeNodesTol)
     uginclean3d = FilterOnlyTopLevelCells( ugin3d )
     with tempfile.TemporaryDirectory() as d:
         tempFileNameIn = os.path.join(d,"inpp.med")
@@ -170,7 +172,7 @@ def EngineOfRemesh(ugin2d,ugin3d,constantSize):
         rds.Update()
         return rds.GetOutputDataObject(0)
 
-def EngineOfRemeshSubProcess(ugin2d,ugin3d,constantSize):
+def EngineOfRemeshSubProcess(ugin2d,ugin3d,constantSize,mergeNodesTol):
     with tempfile.TemporaryDirectory() as d:
         import subprocess as sp
         ugw = vtk.vtkXMLUnstructuredGridWriter()
@@ -186,7 +188,7 @@ def EngineOfRemeshSubProcess(ugin2d,ugin3d,constantSize):
         ugw.Update()
         #
         outputFileName = os.path.join(d,"return.vtu")
-        cmd = ["python3",__file__,"-d",par1,"-t",par2,"-o",outputFileName,"-s",str(constantSize)]
+        cmd = ["python3",__file__,"-d",par1,"-t",par2,"-o",outputFileName,"-s",str(constantSize),"-z",str(mergeNodesTol)]
         print("Cmd launched : {}".format(" ".join(cmd)))
         p = sp.Popen(cmd)
         p.communicate()
@@ -203,6 +205,7 @@ if __name__ == "__main__":
     parser.add_argument('-t','--threed', dest="threed", required=True, help="3D VTU dataset")
     parser.add_argument('-o','--output', dest="output", required=True, help="3D VTU dataset")
     parser.add_argument('-s','--constant-size', dest = "constantSize", type=float, default=0.04, help="Float indicating the size of cells to be generated")
+    parser.add_argument('-z','--mergenodes-tolerance', dest = "mergeNodesTolerance", type=float, default=1e-7, help="Float indicating the tolerance below which nodes in ugin2d will be merged")
     args = parser.parse_args()
     rd1 = vtk.vtkXMLUnstructuredGridReader()
     rd1.SetFileName(args.twod)
@@ -211,7 +214,7 @@ if __name__ == "__main__":
     rd2.SetFileName(args.threed)
     rd2.Update()
     #
-    ret = EngineOfRemesh( rd1.GetOutputDataObject(0), rd2.GetOutputDataObject(0),  args.constantSize)
+    ret = EngineOfRemesh( rd1.GetOutputDataObject(0), rd2.GetOutputDataObject(0),  args.constantSize, args.mergeNodesTolerance)
     #
     ugw = vtk.vtkXMLUnstructuredGridWriter()
     ugw.SetInputData(ret)

@@ -69,7 +69,8 @@ class SliceRemesh(VTKPythonAlgorithmBase):
   def __init__(self):
     super().__init__(nInputPorts=2, nOutputPorts=1, outputType="vtkDataObject")
     self._mesherParameters = {
-      "target_size": 1.0
+      "target_size": 1.0,
+      "tolerance_merge_nodes":1.0
     }
 
   def FillInputPortInformation(self, port, info):
@@ -99,6 +100,15 @@ class SliceRemesh(VTKPythonAlgorithmBase):
       self._mesherParameters["target_size"] = size
       self.Modified()
 
+  @smproperty.doublevector(name="ToleranceMergeNodes", label="Tolerance Merge Nodes", number_of_elements=1, default_values=1e-7)
+  def SetToleranceMergeNodes(self, size):
+    """
+    Set the tolerance use to merge nodes.
+    """
+    if self._mesherParameters["tolerance_merge_nodes"] != size:
+      self._mesherParameters["tolerance_merge_nodes"] = size
+      self.Modified()
+
   def RequestData(self, request, inInfo, outInfo):
     in3dData = self.GetInputData(inInfo, 0, 0)
     inSliceToRemesh2dData = self.GetInputData(inInfo, 1, 0)
@@ -117,7 +127,7 @@ class SliceRemesh(VTKPythonAlgorithmBase):
       inSliceToRemesh2dData = ret ; del ret
 
     import slice_remesh_engine
-    ret = slice_remesh_engine.EngineOfRemeshSubProcess(inSliceToRemesh2dData,in3dData,self._mesherParameters["target_size"])
+    ret = slice_remesh_engine.EngineOfRemeshSubProcess(inSliceToRemesh2dData,in3dData,self._mesherParameters["target_size"],self._mesherParameters["tolerance_merge_nodes"])
     outData.ShallowCopy(ret)
 
     return 1
