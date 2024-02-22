@@ -33,7 +33,7 @@
 #include <vtkMultiBlockDataSet.h>
 #include "vtkStreamTracer.h"
 #include "vtkPointSource.h"
-#include "vtkPCellDataToPointData.h"
+#include "vtkCellDataToPointData.h"
 
 #include "vtkCompositeDataIterator.h"
 #include "vtkCompositeInterpolatedVelocityField.h"
@@ -147,7 +147,7 @@ int vtkElectromagnetismStreamTraceur::RequestData(vtkInformation* vtkNotUsed(req
   vtkDataSet *input( vtkDataSet::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT())) );
   const char *ArrayForGlyph(arr->GetName());
   //
-  vtkNew<vtkPCellDataToPointData> cc;
+  vtkNew<vtkCellDataToPointData> cc;
   cc->SetInputData(input0);
   cc->SetProcessAllArrays(1);
   cc->SetPassCellData(0);
