@@ -39,7 +39,7 @@
 #include <vtkCompositeDataIterator.h>
 #include <vtkDataObject.h>
 #include <vtkDemandDrivenPipeline.h>
-#include <vtkHierarchicalBoxDataSet.h>
+#include <vtkOverlappingAMR.h>
 #include <vtkInformation.h>
 #include <vtkInformationStringVectorKey.h>
 #include <vtkInformationVector.h>
@@ -113,7 +113,7 @@ int vtkMyPVContourFilter::RequestData(
   }
 
   // Check if input is AMR data.
-  if (vtkHierarchicalBoxDataSet::SafeDownCast(inDataObj))
+  if (vtkOverlappingAMR::SafeDownCast(inDataObj))
   {
     // This is a lot to go through to get the name of the array to process.
     vtkInformation* inArrayInfo = this->GetInputArrayInformation(0);
@@ -167,7 +167,7 @@ int vtkMyPVContourFilter::RequestDataObject(vtkInformation* vtkNotUsed(request),
     return 0;
   }
 
-  vtkHierarchicalBoxDataSet* input = vtkHierarchicalBoxDataSet::GetData(inInfo);
+  vtkOverlappingAMR* input = vtkOverlappingAMR::GetData(inInfo);
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   if (input)
@@ -261,6 +261,6 @@ int vtkMyPVContourFilter::FillInputPortInformation(int port, vtkInformation* inf
 
   // According to the documentation this is the way to append additional
   // input data set type since VTK 5.2.
-  info->Append(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkHierarchicalBoxDataSet");
+  info->Append(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkOverlappingAMR");
   return 1;
 }

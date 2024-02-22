@@ -605,8 +605,6 @@ int vtkMyContourFilter::RequestData(
       // is acceptable.
       //
       int cellType;
-      unsigned char cellTypeDimensions[VTK_NUMBER_OF_CELL_TYPES];
-      vtkCutter::GetCellTypeDimensions(cellTypeDimensions);
       int dimensionality;
       // We skip 0d cells (points), because they cannot be cut (generate no data).
       for (dimensionality = 1; dimensionality <= 3; ++dimensionality)
@@ -623,7 +621,7 @@ int vtkMyContourFilter::RequestData(
             vtkErrorMacro("Unknown cell type " << cellType);
             continue;
           }
-          if (cellTypeDimensions[cellType] != dimensionality)
+          if (vtkCellTypes::GetDimension(cellType) != dimensionality)
           {
             continue;
           }
