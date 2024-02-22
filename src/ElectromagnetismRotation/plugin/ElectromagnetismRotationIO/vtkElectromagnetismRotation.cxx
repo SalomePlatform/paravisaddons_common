@@ -398,6 +398,7 @@ int vtkElectromagnetismRotation::RequestData(vtkInformation *request, vtkInforma
       vtkErrorMacro(<< "Exception has been thrown in vtkElectromagnetismRotation::RequestData : " << e.what());
       return 0;
     }
+  return 1;
 }
 
 int vtkElectromagnetismRotation::GetSILUpdateStamp()

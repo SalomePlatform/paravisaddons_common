@@ -74,7 +74,7 @@ void pqElectroRotationGroupWidget::loadTreeWidgetItems()
   vtkIdType mfg = tree->GetChild(root, 1); // MeshesFamsGrps
 
   vtkIdType mesh = tree->GetChild(mfg, 0); // mesh
-  QString meshName = QString(names->GetValue(mesh));
+  QString meshName = QString(names->GetValue(mesh).c_str());
 
   this->NItems = 0;
 
@@ -139,7 +139,7 @@ void pqElectroRotationGroupWidget::loadTreeWidgetItems()
       this->NItems++;
 
       // Group name
-      QString name = QString(names->GetValue(grp));
+      QString name = QString(names->GetValue(grp).c_str());
       grpItem->setText(0, name);
 
       // Property Name
