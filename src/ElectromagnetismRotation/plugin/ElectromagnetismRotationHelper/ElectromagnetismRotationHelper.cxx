@@ -157,7 +157,7 @@ void ElectromagnetismRotationInternal::loadFrom(vtkMutableDirectedGraph *sil)
   while(it0->HasNext())
     {
       vtkIdType id1(it0->Next());
-      std::string meshName((const char *)verticesNames2->GetValue(id1));
+      std::string meshName(verticesNames2->GetValue(id1));
       this->_mesh_name=meshName;
       vtkAdjacentVertexIterator *it1(vtkAdjacentVertexIterator::New());
       sil->GetAdjacentVertices(id1,it1);
@@ -167,14 +167,14 @@ void ElectromagnetismRotationInternal::loadFrom(vtkMutableDirectedGraph *sil)
       while(itGrps->HasNext())
         {
           vtkIdType idg(itGrps->Next());
-          ElectromagnetismRotationGrp grp((const char *)verticesNames2->GetValue(idg));
+          ElectromagnetismRotationGrp grp(verticesNames2->GetValue(idg).c_str());
           vtkAdjacentVertexIterator *itGrps2(vtkAdjacentVertexIterator::New());
           sil->GetAdjacentVertices(idg,itGrps2);
           std::vector<std::string> famsOnGroup;
           while(itGrps2->HasNext())
             {
               vtkIdType idgf(itGrps2->Next());
-              famsOnGroup.push_back(std::string((const char *)verticesNames2->GetValue(idgf)));
+              famsOnGroup.push_back(std::string(verticesNames2->GetValue(idgf)));
             }
           grp.setFamilies(famsOnGroup);
           itGrps2->Delete();
@@ -188,7 +188,7 @@ void ElectromagnetismRotationInternal::loadFrom(vtkMutableDirectedGraph *sil)
       while(itFams->HasNext())
         {
           vtkIdType idf(itFams->Next());
-          ElectromagnetismRotationFam fam((const char *)verticesNames2->GetValue(idf));
+          ElectromagnetismRotationFam fam(verticesNames2->GetValue(idf).c_str());
           _fams.push_back(fam);
         }
       itFams->Delete();
