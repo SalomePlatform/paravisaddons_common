@@ -382,7 +382,7 @@ void ConvertFromUnstructuredGrid(vtkUnstructuredGrid* ds,
     }
   }
   MCAuto<DataArrayIdType> levs(lev->getDifferentValues());
-  vtkIdTypeArray *faces(ds->GetFaces()), *faceLoc(ds->GetFaceLocations());
+  vtkCellArray *faces(ds->GetPolyhedronFaces()), *faceLoc(ds->GetPolyhedronFaceLocations());
   for (const mcIdType* curLev = levs->begin(); curLev != levs->end(); curLev++)
   {
     MCAuto<MEDCouplingUMesh> m0(MEDCouplingUMesh::New("", *curLev));
@@ -408,15 +408,17 @@ void ConvertFromUnstructuredGrid(vtkUnstructuredGrid* ds,
         if (!faces || !faceLoc)
           throw INTERP_KERNEL::Exception(
             "ConvertFromUnstructuredGrid : faces are expected when there are polyhedra !");
-        const vtkIdType *facPtr(faces->GetPointer(0)), *facLocPtr(faceLoc->GetPointer(0));
+        vtkIdList* faceLocIds;
+        faceLoc->GetCellAtId(*cellId, faceLocIds);
         std::vector<mcIdType> conn;
-        int off0(facLocPtr[*cellId]);
-        int nbOfFaces(facPtr[off0++]);
+        int nbOfFaces = faceLocIds->GetNumberOfIds();
         for (int k = 0; k < nbOfFaces; k++)
         {
-          int nbOfNodesInFace(facPtr[off0++]);
-          std::copy(facPtr + off0, facPtr + off0 + nbOfNodesInFace, std::back_inserter(conn));
-          off0 += nbOfNodesInFace;
+          vtkIdList* faceIds;
+          faces->GetCellAtId(faceLocIds->GetId(k), faceIds);
+          vtkIdType* faceIdsPtr = faceIds->GetPointer(0);
+          int nbOfNodesInFace = faceIds->GetNumberOfIds();
+          std::copy(faceIdsPtr, faceIdsPtr + nbOfNodesInFace, std::back_inserter(conn));
           if (k < nbOfFaces - 1)
             conn.push_back(-1);
         }
