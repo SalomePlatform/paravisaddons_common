@@ -105,8 +105,8 @@ typedef enum
 // Définit les informations sur une variables ;
 typedef struct
 {
-  char name[VAR_DESC_SIZE] ;
-  char unit[VAR_DESC_SIZE] ;
+  char name[VAR_DESC_SIZE + 1] ;
+  char unit[VAR_DESC_SIZE + 1] ;
   int ncomp; // Number of coponent
   int icomp; // Id of component
 
