@@ -47,3 +47,6 @@ paraview_plugin_build(
   LIBRARY_SUBDIRECTORY "${PARAVIEW_PLUGIN_SUBDIR}"
   PLUGINS ${plugins}
   AUTOLOAD ${plugins})
+
+add_subdirectory(Test)
+  
