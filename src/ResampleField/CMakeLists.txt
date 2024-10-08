@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2024  CEA, EDF
+# Copyright (C) 2022-2024  CEA, EDF
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,16 +17,6 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(COMPONENT_NAME PARAVISADDONS_COMMON)
-SET(TIMEOUT        240)
+install(FILES PluginResampleFieldMedCoupling.py DESTINATION lib/paraview)
 
-SUBDIRS(SerafinReader)
-SUBDIRS(ElectromagnetismFluxDisc)
-SUBDIRS(ElectromagnetismRotation)
-SUBDIRS(ElectromagnetismStreamTraceur)
-SUBDIRS(ElectromagnetismVecteur)
-SUBDIRS(ContactReader)
-SUBDIRS(QuadraticToLinear)
-SUBDIRS(SliceRemesh)
-SUBDIRS(ZJFilter)
-SUBDIRS(ResampleField)
+add_subdirectory(Test)

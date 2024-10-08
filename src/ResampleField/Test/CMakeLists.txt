@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2024  CEA, EDF
+# Copyright (C) 2022-2024  CEA, EDF
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,16 +17,15 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-SET(COMPONENT_NAME PARAVISADDONS_COMMON)
-SET(TIMEOUT        240)
+SET(test_ResampleField_src
+  testResampleFieldMedCoupling.py
+  )
 
-SUBDIRS(SerafinReader)
-SUBDIRS(ElectromagnetismFluxDisc)
-SUBDIRS(ElectromagnetismRotation)
-SUBDIRS(ElectromagnetismStreamTraceur)
-SUBDIRS(ElectromagnetismVecteur)
-SUBDIRS(ContactReader)
-SUBDIRS(QuadraticToLinear)
-SUBDIRS(SliceRemesh)
-SUBDIRS(ZJFilter)
-SUBDIRS(ResampleField)
+# Application tests
+
+SET(TEST_INSTALL_DIRECTORY ${PARAVISADDONS_COMMON_INSTALL_TESTS}/ResampleField)
+INSTALL(FILES ${test_ResampleField_src} DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+INSTALL(FILES CTestTestfileInstall.cmake
+        DESTINATION ${TEST_INSTALL_DIRECTORY}
+        RENAME CTestTestfile.cmake)
