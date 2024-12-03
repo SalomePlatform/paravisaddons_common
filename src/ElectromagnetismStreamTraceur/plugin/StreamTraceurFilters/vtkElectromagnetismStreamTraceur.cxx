@@ -38,7 +38,6 @@
 #include "vtkCompositeDataIterator.h"
 #include "vtkCompositeInterpolatedVelocityField.h"
 #include "vtkCompositeDataPipeline.h"
-#include "vtkInterpolatedVelocityField.h"
 
 #include <vector>
 
