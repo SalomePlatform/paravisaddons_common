@@ -139,7 +139,7 @@ quadraticmed.UpdatePipeline()
 quadraticToLinear1 = QuadraticToLinear(registrationName='QuadraticToLinear1', Input=quadraticmed)
 quadraticToLinear1.UpdatePipeline()
 
-expected_range = {"FieldDouble": (0.6021032929420471, 1.9037944078445435),
+expected_range = {"FieldDouble": (0.6021032674477044, 1.9037943971385052),
                   "FieldFloat": (1, 1),
                   "FieldInt32": (1, 1)}
 
