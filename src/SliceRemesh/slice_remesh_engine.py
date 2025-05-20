@@ -199,6 +199,13 @@ def EngineOfRemeshSubProcess(ugin2d,ugin3d,constantSize,mergeNodesTol):
         return rd1.GetOutputDataObject(0)
 
 if __name__ == "__main__":
+    # Remove the first element of sys.path which is appended when this script is called in subprocess.
+    # This path is already defined in salome environment
+    # In the case of SOD, we know that PARAVISADDONS/bin == SHAPER/bin
+    # So the fact of having this path in the first element of sys.path can lead to the conflict between SHAPER/bin/salome/__init__.py and KERNEL/lib/pythonX.X/site-packages/salome/salome/__init__.py
+    import sys
+    sys.path = sys.path[1:]
+
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-d','--twod', dest="twod", required=True, help="2D VTU dataset to remesh")
