@@ -20,21 +20,21 @@
 # 
 
 import sys
-import salome
+from salome.kernel import salome
 
 salome.salome_init()
 
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 import math
-import SALOMEDS
+from salome.kernel import SALOMEDS
 
 geompy = geomBuilder.New()
 
 O = geompy.MakeVertex(0, 0, 0)
 Cylinder_1 = geompy.MakeCylinderRH(100, 300)
 
-import  SMESH, SALOMEDS
+from salome.kernel import SMESH, SALOMEDS
 from salome.smesh import smeshBuilder
 
 smesh = smeshBuilder.New()

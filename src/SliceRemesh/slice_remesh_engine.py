@@ -25,9 +25,9 @@ import tempfile
 import os
 
 def Remesh(in_mesh_path, out_mesh_path, constant_size):
-    import salome
+    from salome.kernel import salome
     salome.salome_init()
-    import SMESH, SALOMEDS
+    from salome.kernel import SMESH, SALOMEDS
     from salome.smesh import smeshBuilder
     smesh = smeshBuilder.New()
 
