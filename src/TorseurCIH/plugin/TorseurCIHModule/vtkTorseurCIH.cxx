@@ -172,7 +172,7 @@ void ExtractInfo(vtkInformationVector* inputVector, vtkSmartPointer<vtkUnstructu
     usgIn->Register(nullptr);
 }
 
-DataArrayInt* ConvertVTKArrayToMCArrayInt(vtkDataArray* data)
+MEDCoupling::DataArrayInt* ConvertVTKArrayToMCArrayInt(vtkDataArray* data)
 {
   if (!data)
     throw INTERP_KERNEL::Exception("ConvertVTKArrayToMCArrayInt : internal error !");
@@ -225,7 +225,7 @@ vtkSmartPointer<vtkDoubleArray> ConvertMCArrayToVTKArray(MEDCoupling::DataArrayD
   return ret;
 }
 
-DataArrayDouble* ConvertVTKArrayToMCArrayDouble(vtkDataArray* data)
+MEDCoupling::DataArrayDouble* ConvertVTKArrayToMCArrayDouble(vtkDataArray* data)
 {
   if (!data)
     throw INTERP_KERNEL::Exception("ConvertVTKArrayToMCArrayDouble : internal error !");
@@ -261,7 +261,7 @@ DataArrayDouble* ConvertVTKArrayToMCArrayDouble(vtkDataArray* data)
   throw INTERP_KERNEL::Exception(oss.str());
 }
 
-DataArray* ConvertVTKArrayToMCArray(vtkDataArray* data)
+MEDCoupling::DataArray* ConvertVTKArrayToMCArray(vtkDataArray* data)
 {
   if (!data)
     throw INTERP_KERNEL::Exception("ConvertVTKArrayToMCArray : internal error !");
@@ -278,7 +278,7 @@ DataArray* ConvertVTKArrayToMCArray(vtkDataArray* data)
   throw INTERP_KERNEL::Exception(oss.str());
 }
 
-DataArrayDouble* BuildCoordsFrom(vtkPointSet* ds)
+MEDCoupling::DataArrayDouble* BuildCoordsFrom(vtkPointSet* ds)
 {
   if (!ds)
     throw INTERP_KERNEL::Exception("BuildCoordsFrom : internal error !");
