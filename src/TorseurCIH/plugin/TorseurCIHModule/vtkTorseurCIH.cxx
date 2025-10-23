@@ -178,7 +178,7 @@ DataArrayInt* ConvertVTKArrayToMCArrayInt(vtkDataArray* data)
     throw INTERP_KERNEL::Exception("ConvertVTKArrayToMCArrayInt : internal error !");
   int nbTuples(data->GetNumberOfTuples()), nbComp(data->GetNumberOfComponents());
   std::size_t nbElts(nbTuples * nbComp);
-  MCAuto<DataArrayInt> ret(DataArrayInt::New());
+  MCAuto<MEDCoupling::DataArrayInt> ret(MEDCoupling::DataArrayInt::New());
   ret->alloc(nbTuples, nbComp);
   for (int i = 0; i < nbComp; i++)
   {
@@ -214,7 +214,7 @@ DataArrayInt* ConvertVTKArrayToMCArrayInt(vtkDataArray* data)
   throw INTERP_KERNEL::Exception(oss.str());
 }
 
-vtkSmartPointer<vtkDoubleArray> ConvertMCArrayToVTKArray(DataArrayDouble *data)
+vtkSmartPointer<vtkDoubleArray> ConvertMCArrayToVTKArray(MEDCoupling::DataArrayDouble *data)
 {
   if (!data)
     throw INTERP_KERNEL::Exception("ConvertMCArrayToVTKArray : internal error !");
@@ -231,7 +231,7 @@ DataArrayDouble* ConvertVTKArrayToMCArrayDouble(vtkDataArray* data)
     throw INTERP_KERNEL::Exception("ConvertVTKArrayToMCArrayDouble : internal error !");
   int nbTuples(data->GetNumberOfTuples()), nbComp(data->GetNumberOfComponents());
   std::size_t nbElts(nbTuples * nbComp);
-  MCAuto<DataArrayDouble> ret(DataArrayDouble::New());
+  MCAuto<MEDCoupling::DataArrayDouble> ret(MEDCoupling::DataArrayDouble::New());
   ret->alloc(nbTuples, nbComp);
   for (int i = 0; i < nbComp; i++)
   {
@@ -288,11 +288,11 @@ DataArrayDouble* BuildCoordsFrom(vtkPointSet* ds)
   vtkDataArray* data(pts->GetData());
   if (!data)
     throw INTERP_KERNEL::Exception("BuildCoordsFrom : internal error 3 !");
-  MCAuto<DataArrayDouble> coords(ConvertVTKArrayToMCArrayDouble(data));
+  MCAuto<MEDCoupling::DataArrayDouble> coords(ConvertVTKArrayToMCArrayDouble(data));
   return coords.retn();
 }
 
-vtkSmartPointer<vtkUnstructuredGrid> BuildFromPtCloud(DataArrayDouble *pts)
+vtkSmartPointer<vtkUnstructuredGrid> BuildFromPtCloud(MEDCoupling::DataArrayDouble *pts)
 {
   vtkSmartPointer<vtkUnstructuredGrid> ret(vtkSmartPointer<vtkUnstructuredGrid>::New());
   mcIdType nbPt(pts->getNumberOfTuples());
@@ -352,16 +352,16 @@ vtkSmartPointer<vtkUnstructuredGrid> BuildPart(vtkUnstructuredGrid *ds, const mc
 }
 
 void ConvertFromUnstructuredGrid(vtkUnstructuredGrid* ds,
-  std::vector<MCAuto<MEDCouplingUMesh> >& ms, std::vector<MCAuto<DataArrayIdType> >& ids)
+  std::vector<MCAuto<MEDCouplingUMesh> >& ms, std::vector<MCAuto<MEDCoupling::DataArrayIdType> >& ids)
 {
-  MCAuto<DataArrayDouble> coords(BuildCoordsFrom(ds));
+  MCAuto<MEDCoupling::DataArrayDouble> coords(BuildCoordsFrom(ds));
   vtkIdType nbCells(ds->GetNumberOfCells());
   vtkUnsignedCharArray* ct(ds->GetCellTypesArray());
   if (!ct)
     throw INTERP_KERNEL::Exception("ConvertFromUnstructuredGrid : internal error");
   const unsigned char* ctPtr(ct->GetPointer(0));
   std::map<int, int> m(ComputeMapOfType());
-  MCAuto<DataArrayIdType> lev(DataArrayIdType::New());
+  MCAuto<MEDCoupling::DataArrayIdType> lev(MEDCoupling::DataArrayIdType::New());
   lev->alloc(nbCells, 1);
   mcIdType* levPtr(lev->getPointer());
   for (vtkIdType i = 0; i < nbCells; i++)
@@ -381,14 +381,14 @@ void ConvertFromUnstructuredGrid(vtkUnstructuredGrid* ds,
       throw INTERP_KERNEL::Exception(oss.str());
     }
   }
-  MCAuto<DataArrayIdType> levs(lev->getDifferentValues());
+  MCAuto<MEDCoupling::DataArrayIdType> levs(lev->getDifferentValues());
   vtkCellArray *faces(ds->GetPolyhedronFaces()), *faceLoc(ds->GetPolyhedronFaceLocations());
   for (const mcIdType* curLev = levs->begin(); curLev != levs->end(); curLev++)
   {
     MCAuto<MEDCouplingUMesh> m0(MEDCouplingUMesh::New("", *curLev));
     m0->setCoords(coords);
     m0->allocateCells();
-    MCAuto<DataArrayIdType> cellIdsCurLev(lev->findIdsEqual(*curLev));
+    MCAuto<MEDCoupling::DataArrayIdType> cellIdsCurLev(lev->findIdsEqual(*curLev));
     for (const mcIdType* cellId = cellIdsCurLev->begin(); cellId != cellIdsCurLev->end(); cellId++)
     {
       std::map<int, int>::iterator it(m.find(ctPtr[*cellId]));
@@ -439,7 +439,7 @@ vtkSmartPointer<vtkUnstructuredGrid> ConvertUMeshFromMCToVTK(const MEDCouplingUM
   ret->Allocate();
   vtkSmartPointer<vtkPoints> points(vtkSmartPointer<vtkPoints>::New());
   {
-    const DataArrayDouble* vorCoords(mVor->getCoords());
+    const MEDCoupling::DataArrayDouble* vorCoords(mVor->getCoords());
     vtkSmartPointer<vtkDoubleArray> da(vtkSmartPointer<vtkDoubleArray>::New());
     da->SetNumberOfComponents(vorCoords->getNumberOfComponents());
     da->SetNumberOfTuples(vorCoords->getNumberOfTuples());
@@ -467,7 +467,7 @@ vtkSmartPointer<vtkUnstructuredGrid> ConvertUMeshFromMCToVTK(const MEDCouplingUM
       }
       vtkSmartPointer<vtkIdTypeArray> cells(vtkSmartPointer<vtkIdTypeArray>::New());
       {
-        MCAuto<DataArrayIdType> tmp2(mVor->computeEffectiveNbOfNodesPerCell());
+        MCAuto<MEDCoupling::DataArrayIdType> tmp2(mVor->computeEffectiveNbOfNodesPerCell());
         cells->SetNumberOfComponents(1);
         cells->SetNumberOfTuples(tmp2->accumulate((std::size_t)0) + nbCells);
         dPtr = cells->GetPointer(0);
@@ -609,42 +609,42 @@ vtkSmartPointer<vtkUnstructuredGrid> ConvertUMeshFromMCToVTK(const MEDCouplingUM
   return ret;
 }
 
-MCAuto<DataArrayDouble> ForceBuilder(const std::vector<std::size_t>& TAB, const DataArrayDouble* matrix, const DataArrayDouble* eqn)
+MCAuto<MEDCoupling::DataArrayDouble> ForceBuilder(const std::vector<std::size_t>& TAB, const MEDCoupling::DataArrayDouble* matrix, const MEDCoupling::DataArrayDouble* eqn)
 {
-  MCAuto<DataArrayDouble> tmp0, tmp1, ret;
+  MCAuto<MEDCoupling::DataArrayDouble> tmp0, tmp1, ret;
   tmp0 = matrix->keepSelectedComponents({ TAB[0] });
   tmp1 = eqn->keepSelectedComponents({ 0 });
-  MCAuto<DataArrayDouble> p0(DataArrayDouble::Multiply(tmp0, tmp1));
+  MCAuto<MEDCoupling::DataArrayDouble> p0(MEDCoupling::DataArrayDouble::Multiply(tmp0, tmp1));
   tmp0 = matrix->keepSelectedComponents({ TAB[1] });
   tmp1 = eqn->keepSelectedComponents({ 1 });
-  MCAuto<DataArrayDouble> p1(DataArrayDouble::Multiply(tmp0, tmp1));
-  ret = DataArrayDouble::Add(p0, p1);
+  MCAuto<MEDCoupling::DataArrayDouble> p1(MEDCoupling::DataArrayDouble::Multiply(tmp0, tmp1));
+  ret = MEDCoupling::DataArrayDouble::Add(p0, p1);
   tmp0 = matrix->keepSelectedComponents({ TAB[2] });
   tmp1 = eqn->keepSelectedComponents({ 2 });
-  MCAuto<DataArrayDouble> p2(DataArrayDouble::Multiply(tmp0, tmp1));
-  ret = DataArrayDouble::Add(ret, p2);
+  MCAuto<MEDCoupling::DataArrayDouble> p2(MEDCoupling::DataArrayDouble::Multiply(tmp0, tmp1));
+  ret = MEDCoupling::DataArrayDouble::Add(ret, p2);
   return ret;
 }
 
 double ReturnInertia(
-  const double pOut[3], const DataArrayDouble* OM, const DataArrayDouble* area_field_ids)
+  const double pOut[3], const MEDCoupling::DataArrayDouble* OM, const MEDCoupling::DataArrayDouble* area_field_ids)
 {
-  MCAuto<DataArrayDouble> base_X(DataArrayDouble::New());
+  MCAuto<MEDCoupling::DataArrayDouble> base_X(MEDCoupling::DataArrayDouble::New());
   base_X->alloc(OM->getNumberOfTuples(), 3);
   base_X->setPartOfValuesSimple1(pOut[0], 0, OM->getNumberOfTuples(), 1, 0, 1, 1);
   base_X->setPartOfValuesSimple1(pOut[1], 0, OM->getNumberOfTuples(), 1, 1, 2, 1);
   base_X->setPartOfValuesSimple1(pOut[2], 0, OM->getNumberOfTuples(), 1, 2, 3, 1);
-  MCAuto<DataArrayDouble> dist_to_base_X;
+  MCAuto<MEDCoupling::DataArrayDouble> dist_to_base_X;
   {
-    MCAuto<DataArrayDouble> tmp(DataArrayDouble::Dot(OM, base_X));
-    tmp = DataArrayDouble::Multiply(tmp, base_X);
-    tmp = DataArrayDouble::Substract(OM, tmp);
+    MCAuto<MEDCoupling::DataArrayDouble> tmp(MEDCoupling::DataArrayDouble::Dot(OM, base_X));
+    tmp = MEDCoupling::DataArrayDouble::Multiply(tmp, base_X);
+    tmp = MEDCoupling::DataArrayDouble::Substract(OM, tmp);
     dist_to_base_X = tmp->magnitude();
   }
-  MCAuto<DataArrayDouble> inertiaArr;
+  MCAuto<MEDCoupling::DataArrayDouble> inertiaArr;
   {
-    MCAuto<DataArrayDouble> tmp(DataArrayDouble::Multiply(dist_to_base_X, dist_to_base_X));
-    inertiaArr = DataArrayDouble::Multiply(tmp, area_field_ids);
+    MCAuto<MEDCoupling::DataArrayDouble> tmp(MEDCoupling::DataArrayDouble::Multiply(dist_to_base_X, dist_to_base_X));
+    inertiaArr = MEDCoupling::DataArrayDouble::Multiply(tmp, area_field_ids);
   }
   double inertiaTmp;
   inertiaArr->accumulate(&inertiaTmp);
@@ -652,7 +652,7 @@ double ReturnInertia(
 }
 
 void FindPrincipalAxeInternal(const double startVector[3], const double normalFace[3],
-  const DataArrayDouble* OM, const DataArrayDouble* area_field_ids,
+  const MEDCoupling::DataArrayDouble* OM, const MEDCoupling::DataArrayDouble* area_field_ids,
   const std::vector<double>& posToIterate, double& angleDegree, double outputAxis[3],
   double& inertia)
 {
@@ -661,7 +661,7 @@ void FindPrincipalAxeInternal(const double startVector[3], const double normalFa
   for (auto zePos : posToIterate)
   {
     double p[3] = { startVector[0], startVector[1], startVector[2] }, pOut[3];
-    DataArrayDouble::Rotate3DAlg(CENTER, normalFace, zePos / 180. * M_PI, 1, p, pOut);
+    MEDCoupling::DataArrayDouble::Rotate3DAlg(CENTER, normalFace, zePos / 180. * M_PI, 1, p, pOut);
     double inertiaTmp = ReturnInertia(pOut, OM, area_field_ids);
     if (inertiaTmp > inertia)
     {
@@ -673,7 +673,7 @@ void FindPrincipalAxeInternal(const double startVector[3], const double normalFa
 }
 
 void FindPrincipalAxe(const double startVector[3], const double normalFace[3],
-  const DataArrayDouble* OM, const DataArrayDouble* area_field_ids, double& angleDegree,
+  const MEDCoupling::DataArrayDouble* OM, const MEDCoupling::DataArrayDouble* area_field_ids, double& angleDegree,
   double outputAxis[3], double& inertia)
 {
   std::vector<double> R(
@@ -695,7 +695,7 @@ vtkSmartPointer< vtkUnstructuredGrid >& baryVTK)
 {
   std::vector<MCAuto<MEDCouplingUMesh> > m;
   {
-    std::vector<MCAuto<DataArrayIdType> > ids;
+    std::vector<MCAuto<MEDCoupling::DataArrayIdType> > ids;
     ConvertFromUnstructuredGrid(usgIn, m, ids);
   }
   //
@@ -726,11 +726,11 @@ vtkSmartPointer< vtkUnstructuredGrid >& baryVTK)
   MCAuto<MEDCouplingFieldDouble> area_field(m[0]->getMeasureField(true));
   double area;
   area_field->accumulate(&area); // 1
-  MCAuto<DataArrayDouble> centerOfMassField(m[0]->computeCellCenterOfMass());
+  MCAuto<MEDCoupling::DataArrayDouble> centerOfMassField(m[0]->computeCellCenterOfMass());
   double centerOfMass[3];
   {
-    MCAuto<DataArrayDouble> tmp(
-      DataArrayDouble::Multiply(centerOfMassField, area_field->getArray()));
+    MCAuto<MEDCoupling::DataArrayDouble> tmp(
+      MEDCoupling::DataArrayDouble::Multiply(centerOfMassField, area_field->getArray()));
     tmp->accumulate(centerOfMass);
     std::for_each(centerOfMass, centerOfMass + 3, [area](double& v) { v /= area; });
   } // 2
@@ -751,38 +751,38 @@ vtkSmartPointer< vtkUnstructuredGrid >& baryVTK)
   MCAuto<MEDCouplingFieldDouble> f(MEDCouplingFieldDouble::New(MEDCoupling::ON_NODES));
   {
     f->setMesh(m[0]);
-    MCAuto<DataArrayDouble> tmp(ConvertVTKArrayToMCArrayDouble(sief));
+    MCAuto<MEDCoupling::DataArrayDouble> tmp(ConvertVTKArrayToMCArrayDouble(sief));
     f->setArray(tmp);
   }
   MCAuto<MEDCouplingFieldDouble> fCell(f->nodeToCellDiscretization());
-  MCAuto<DataArrayIdType> ids;
+  MCAuto<MEDCoupling::DataArrayIdType> ids;
   {
-    MCAuto<DataArrayIdType> tmp(area_field->getArray()->findIdsLowerThan(1e-7));
+    MCAuto<MEDCoupling::DataArrayIdType> tmp(area_field->getArray()->findIdsLowerThan(1e-7));
     ids = tmp->buildComplement(m[0]->getNumberOfCells());
   }
   {
     ugLev0 = BuildPart(usgIn, ids->begin(), ids->end());
   }
   MCAuto<MEDCouplingUMesh> m_ids(m[0]->buildPartOfMySelf(ids->begin(), ids->end()));
-  MCAuto<DataArrayDouble> eqn;
+  MCAuto<MEDCoupling::DataArrayDouble> eqn;
   {
-    MCAuto<DataArrayDouble> tmp(m_ids->computePlaneEquationOf3DFaces());
+    MCAuto<MEDCoupling::DataArrayDouble> tmp(m_ids->computePlaneEquationOf3DFaces());
     eqn = tmp->keepSelectedComponents({ 0, 1, 2 });
     tmp = eqn->magnitude();
-    eqn = DataArrayDouble::Divide(eqn, tmp);
+    eqn = MEDCoupling::DataArrayDouble::Divide(eqn, tmp);
   }
-  MCAuto<DataArrayDouble> area_field_ids(
+  MCAuto<MEDCoupling::DataArrayDouble> area_field_ids(
     area_field->getArray()->selectByTupleId(ids->begin(), ids->end()));
-  MCAuto<DataArrayDouble> area_vector(DataArrayDouble::Multiply(eqn, area_field_ids));
-  MCAuto<DataArrayDouble> matrix(fCell->getArray()->selectByTupleId(ids->begin(), ids->end()));
-  MCAuto<DataArrayDouble> F_x, F_y, F_z;
+  MCAuto<MEDCoupling::DataArrayDouble> area_vector(MEDCoupling::DataArrayDouble::Multiply(eqn, area_field_ids));
+  MCAuto<MEDCoupling::DataArrayDouble> matrix(fCell->getArray()->selectByTupleId(ids->begin(), ids->end()));
+  MCAuto<MEDCoupling::DataArrayDouble> F_x, F_y, F_z;
   {
     F_x = ForceBuilder({ 0, 3, 4 }, matrix, eqn);
     F_y = ForceBuilder({ 3, 1, 5 }, matrix, eqn);
     F_z = ForceBuilder({ 4, 5, 2 }, matrix, eqn);
   }
   //
-  MCAuto<DataArrayDouble> F(DataArrayDouble::Meld({ F_x, F_y, F_z }));
+  MCAuto<MEDCoupling::DataArrayDouble> F(MEDCoupling::DataArrayDouble::Meld({ F_x, F_y, F_z }));
   vtkSmartPointer<vtkDoubleArray> FXYZ = ConvertMCArrayToVTKArray(F);
   FXYZ->SetName( "FXYZ" );
   ugLev0->GetCellData()->AddArray(FXYZ);
@@ -790,11 +790,11 @@ vtkSmartPointer< vtkUnstructuredGrid >& baryVTK)
   F->multiplyEqual(area_field_ids);
   //
   {
-    MCAuto<DataArrayDouble> F_Normal,F_Tangent;
+    MCAuto<MEDCoupling::DataArrayDouble> F_Normal,F_Tangent;
     {
-      MCAuto<DataArrayDouble> F_Normal_norm(DataArrayDouble::Dot(F,eqn));
-      F_Normal = DataArrayDouble::Multiply(eqn,F_Normal_norm);
-      F_Tangent = DataArrayDouble::Substract(F,F_Normal);
+      MCAuto<MEDCoupling::DataArrayDouble> F_Normal_norm(MEDCoupling::DataArrayDouble::Dot(F,eqn));
+      F_Normal = MEDCoupling::DataArrayDouble::Multiply(eqn,F_Normal_norm);
+      F_Tangent = MEDCoupling::DataArrayDouble::Substract(F,F_Normal);
     }
     {
       vtkSmartPointer<vtkDoubleArray> F_Normal_VTK = ConvertMCArrayToVTKArray(F_Normal);
@@ -826,25 +826,25 @@ vtkSmartPointer< vtkUnstructuredGrid >& baryVTK)
   }
   double TangentForce[3] = { ZeForce[0] - ForceNormale[0], ZeForce[1] - ForceNormale[1],
     ZeForce[2] - ForceNormale[2] }; // 4
-  MCAuto<DataArrayDouble> bary(m_ids->computeCellCenterOfMass());
+  MCAuto<MEDCoupling::DataArrayDouble> bary(m_ids->computeCellCenterOfMass());
   //
   baryVTK = BuildFromPtCloud(bary);
   //
-  MCAuto<DataArrayDouble> OM;
+  MCAuto<MEDCoupling::DataArrayDouble> OM;
   {
-    MCAuto<DataArrayDouble> centerOfMass2(DataArrayDouble::New());
+    MCAuto<MEDCoupling::DataArrayDouble> centerOfMass2(MEDCoupling::DataArrayDouble::New());
     centerOfMass2->alloc(1, 3);
     std::copy(centerOfMass, centerOfMass + 3, centerOfMass2->getPointer());
-    OM = DataArrayDouble::Substract(bary, centerOfMass2);
+    OM = MEDCoupling::DataArrayDouble::Substract(bary, centerOfMass2);
   }
   double momentum[3]; // 5
   {
-    MCAuto<DataArrayDouble> tmp(DataArrayDouble::CrossProduct(OM, F));
+    MCAuto<MEDCoupling::DataArrayDouble> tmp(MEDCoupling::DataArrayDouble::CrossProduct(OM, F));
     tmp->accumulate(momentum);
   }
   double InertiaNormale(ReturnInertia(normalFace, OM, area_field_ids)); // 6
   double base[9];
-  DataArrayDouble::GiveBaseForPlane(normalFace, base);
+  MEDCoupling::DataArrayDouble::GiveBaseForPlane(normalFace, base);
   double angleDegree, outputAxis[3], inertia;
   FindPrincipalAxe(base, normalFace, OM, area_field_ids, angleDegree, outputAxis, inertia);
   double tangentOther[3] = { normalFace[1] * outputAxis[2] - normalFace[2] * outputAxis[1],
