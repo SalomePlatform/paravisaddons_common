@@ -175,18 +175,18 @@ void Rotate3DAlg(const double *center, const double *vect, double angle, vtkIdTy
   double norm(sqrt(vect[0]*vect[0]+vect[1]*vect[1]+vect[2]*vect[2]));
   if(norm<std::numeric_limits<double>::min())
     throw MZCException("Rotate3DAlg : magnitude of input vector is too close of 0. !");
-  std::transform(vect,vect+3,vectorNorm,std::bind2nd(std::multiplies<double>(),1/norm));
+  std::transform(vect,vect+3,vectorNorm,std::bind(std::multiplies<double>(),std::placeholders::_1, 1/norm));
   //rotation matrix computation
   matrix[0]=cosa; matrix[1]=0.; matrix[2]=0.; matrix[3]=0.; matrix[4]=cosa; matrix[5]=0.; matrix[6]=0.; matrix[7]=0.; matrix[8]=cosa;
   matrixTmp[0]=vectorNorm[0]*vectorNorm[0]; matrixTmp[1]=vectorNorm[0]*vectorNorm[1]; matrixTmp[2]=vectorNorm[0]*vectorNorm[2];
   matrixTmp[3]=vectorNorm[1]*vectorNorm[0]; matrixTmp[4]=vectorNorm[1]*vectorNorm[1]; matrixTmp[5]=vectorNorm[1]*vectorNorm[2];
   matrixTmp[6]=vectorNorm[2]*vectorNorm[0]; matrixTmp[7]=vectorNorm[2]*vectorNorm[1]; matrixTmp[8]=vectorNorm[2]*vectorNorm[2];
-  std::transform(matrixTmp,matrixTmp+9,matrixTmp,std::bind2nd(std::multiplies<T>(),1-cosa));
+  std::transform(matrixTmp,matrixTmp+9,matrixTmp,std::bind(std::multiplies<T>(),std::placeholders::_1, 1-cosa));
   std::transform(matrix,matrix+9,matrixTmp,matrix,std::plus<T>());
   matrixTmp[0]=0.; matrixTmp[1]=-vectorNorm[2]; matrixTmp[2]=vectorNorm[1];
   matrixTmp[3]=vectorNorm[2]; matrixTmp[4]=0.; matrixTmp[5]=-vectorNorm[0];
   matrixTmp[6]=-vectorNorm[1]; matrixTmp[7]=vectorNorm[0]; matrixTmp[8]=0.;
-  std::transform(matrixTmp,matrixTmp+9,matrixTmp,std::bind2nd(std::multiplies<T>(),sina));
+  std::transform(matrixTmp,matrixTmp+9,matrixTmp,std::bind(std::multiplies<T>(),std::placeholders::_1, sina));
   std::transform(matrix,matrix+9,matrixTmp,matrix,std::plus<T>());
   //rotation matrix computed.
   T tmp[3];
