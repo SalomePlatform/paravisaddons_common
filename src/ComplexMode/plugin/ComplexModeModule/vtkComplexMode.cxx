@@ -353,8 +353,8 @@ int vtkComplexMode::RequestData(vtkInformation *request, vtkInformationVector **
       double *ptToFeed1(arr1->Begin()),*ptToFeed2(arr2->Begin()),*ptToFeed3(zearr->Begin());
       const double *srcPt1(arrReal->Begin()),*srcPt2(arrImag->Begin());
       double cst1(Factor*sin(AnimationTime*2*M_PI)),cst2(Factor*sin(AnimationTime*2*M_PI+Phase*M_PI/180.));
-      std::transform(srcPt1,srcPt1+3*nbPts,ptToFeed1,std::bind2nd(std::multiplies<double>(),cst1));
-      std::transform(srcPt2,srcPt2+3*nbPts,ptToFeed2,std::bind2nd(std::multiplies<double>(),cst2));
+      std::transform(srcPt1,srcPt1+3*nbPts,ptToFeed1, std::bind(std::multiplies<double>(), std::placeholders::_1,cst1));
+      std::transform(srcPt2,srcPt2+3*nbPts,ptToFeed2,std::bind(std::multiplies<double>(),std::placeholders::_1, cst2));
       std::transform(ptToFeed1,ptToFeed1+3*nbPts,ptToFeed2,ptToFeed1,std::plus<double>());
       {
         for(int i=0;i<nbPts;i++)

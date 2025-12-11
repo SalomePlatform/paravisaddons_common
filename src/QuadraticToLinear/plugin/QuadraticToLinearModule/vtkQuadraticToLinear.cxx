@@ -149,6 +149,31 @@ void ExtractInfo(vtkInformationVector *inputVector, vtkUnstructuredGrid *&usgIn)
     throw MZCException("Input data set is not an unstructured mesh ! This filter works only on unstructured meshes !");
 }
 
+template<class VTKArrayType>
+vtkSmartPointer<vtkDataArray> ReduceArray( vtkDataArray * arrIn, int newNbPts, const int *new2Old )
+{
+  vtkIdType nbOfCompo(arrIn->GetNumberOfComponents());
+  vtkSmartPointer<VTKArrayType> ret(vtkSmartPointer<VTKArrayType>::New());
+  vtkSmartPointer<vtkDataArray> zeRet( ret );
+  ret->SetNumberOfComponents(nbOfCompo);
+  ret->SetNumberOfTuples(newNbPts);
+  VTKArrayType *array1(VTKArrayType::SafeDownCast(arrIn));
+  if (array1)
+  {
+    const typename VTKArrayType::ValueType *inpCoords(array1->GetPointer(0));
+    typename VTKArrayType::ValueType *outCoords(ret->GetPointer(0));
+    for (int i = 0; i < newNbPts; i++, outCoords += nbOfCompo)
+      std::copy(inpCoords + new2Old[i] * nbOfCompo, inpCoords + (new2Old[i] + 1) * nbOfCompo, outCoords);
+  }
+  else
+  {
+    std::ostringstream oss;
+    oss << "Only Double array managed for the moment in input !" << arrIn->GetName();
+    throw MZCException(oss.str());
+  }
+  return zeRet;
+}
+
 vtkSmartPointer<vtkDataArray> Reduce(const int *new2Old, int newNbPts, vtkDataArray *array)
 {
   if (!array)
@@ -157,87 +182,23 @@ vtkSmartPointer<vtkDataArray> Reduce(const int *new2Old, int newNbPts, vtkDataAr
   vtkSmartPointer<vtkDataArray> zeRet;
   if (vtkDoubleArray::SafeDownCast(array))
   {
-    vtkSmartPointer<vtkFloatArray> ret(vtkSmartPointer<vtkFloatArray>::New());
-    zeRet = ret;
-    ret->SetNumberOfComponents(nbOfCompo);
-    ret->SetNumberOfTuples(newNbPts);
-    vtkDoubleArray *array1(vtkDoubleArray::SafeDownCast(array));
-    if (array1)
-    {
-      const double *inpCoords(array1->GetPointer(0));
-      float *outCoords(ret->GetPointer(0));
-      for (int i = 0; i < newNbPts; i++, outCoords += nbOfCompo)
-        std::copy(inpCoords + new2Old[i] * nbOfCompo, inpCoords + (new2Old[i] + 1) * nbOfCompo, outCoords);
-    }
-    else
-    {
-      std::ostringstream oss;
-      oss << "Only Double array managed for the moment in input !" << array->GetName();
-      throw MZCException(oss.str());
-    }
+    zeRet = ReduceArray<vtkDoubleArray>( array, newNbPts, new2Old );
+  }
+  else if (vtkUnsignedCharArray::SafeDownCast(array))
+  {
+    zeRet = ReduceArray<vtkUnsignedCharArray>( array, newNbPts, new2Old );
   }
   else if (vtkFloatArray::SafeDownCast(array))
   {
-    vtkSmartPointer<vtkFloatArray> ret(vtkSmartPointer<vtkFloatArray>::New());
-    zeRet = ret;
-    ret->SetNumberOfComponents(nbOfCompo);
-    ret->SetNumberOfTuples(newNbPts);
-    vtkFloatArray *array1(vtkFloatArray::SafeDownCast(array));
-    if (array1)
-    {
-      const float *inpCoords(array1->GetPointer(0));
-      float *outCoords(ret->GetPointer(0));
-      for (int i = 0; i < newNbPts; i++, outCoords += nbOfCompo)
-        std::copy(inpCoords + new2Old[i] * nbOfCompo, inpCoords + (new2Old[i] + 1) * nbOfCompo, outCoords);
-    }
-    else
-    {
-      std::ostringstream oss;
-      oss << "Only Float array managed for the moment in input !" << array->GetName();
-      throw MZCException(oss.str());
-    }
+    zeRet = ReduceArray<vtkFloatArray>( array, newNbPts, new2Old );
   }
   else if (vtkLongArray::SafeDownCast(array))
   {
-    vtkSmartPointer<vtkLongArray> ret(vtkSmartPointer<vtkLongArray>::New());
-    zeRet = ret;
-    ret->SetNumberOfComponents(nbOfCompo);
-    ret->SetNumberOfTuples(newNbPts);
-    vtkLongArray *array1(vtkLongArray::SafeDownCast(array));
-    if (array1)
-    {
-      const long *inpCoords(array1->GetPointer(0));
-      long *outCoords(ret->GetPointer(0));
-      for (int i = 0; i < newNbPts; i++, outCoords += nbOfCompo)
-        std::copy(inpCoords + new2Old[i] * nbOfCompo, inpCoords + (new2Old[i] + 1) * nbOfCompo, outCoords);
-    }
-    else
-    {
-      std::ostringstream oss;
-      oss << "Only Long array managed for the moment in input !" << array->GetName();
-      throw MZCException(oss.str());
-    }
+    zeRet = ReduceArray<vtkLongArray>( array, newNbPts, new2Old );
   }
   else if (vtkIntArray::SafeDownCast(array))
   {
-    vtkSmartPointer<vtkIntArray> ret(vtkSmartPointer<vtkIntArray>::New());
-    zeRet = ret;
-    ret->SetNumberOfComponents(nbOfCompo);
-    ret->SetNumberOfTuples(newNbPts);
-    vtkIntArray *array1(vtkIntArray::SafeDownCast(array));
-    if (array1)
-    {
-      const int *inpCoords(array1->GetPointer(0));
-      int *outCoords(ret->GetPointer(0));
-      for (int i = 0; i < newNbPts; i++, outCoords += nbOfCompo)
-        std::copy(inpCoords + new2Old[i] * nbOfCompo, inpCoords + (new2Old[i] + 1) * nbOfCompo, outCoords);
-    }
-    else
-    {
-      std::ostringstream oss;
-      oss << "Only int32 array managed for the moment in input !" << array->GetName();
-      throw MZCException(oss.str());
-    }
+    zeRet = ReduceArray<vtkIntArray>( array, newNbPts, new2Old );
   }
   else
   {

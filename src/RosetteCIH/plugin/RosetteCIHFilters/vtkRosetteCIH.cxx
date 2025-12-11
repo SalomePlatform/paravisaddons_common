@@ -43,6 +43,22 @@
 #include <vtkVariantArray.h>
 #include <vtkWarpVector.h>
 
+#include <stdexcept>
+#include <sstream>
+
+void RosetteCIHEmitThrowInternal(const std::string& msg)
+{
+  //vtkErrorMacro(msg);
+  throw std::runtime_error( msg );
+}
+
+#define RosetteCIHEmitThrow(text)                  \
+{                                                  \
+    vtkErrorMacro(text);                           \
+    std::ostringstream oss; oss << text;           \
+    RosetteCIHEmitThrowInternal(oss.str());        \
+}
+
 //-----------------------------------------------------------------------------
 void vtkRosetteCIH::ExtractInfo(
   vtkInformationVector* inputVector, vtkSmartPointer<vtkUnstructuredGrid>& usgIn)
@@ -60,26 +76,26 @@ void vtkRosetteCIH::ExtractInfo(
   {
     if (!input1)
     {
-      vtkErrorMacro("Input dataSet must be a DataSet or single elt multi block dataset expected !");
+      RosetteCIHEmitThrow("Input dataSet must be a DataSet or single elt multi block dataset expected !");
       return;
     }
     if (input1->GetNumberOfBlocks() != 1)
     {
-      vtkErrorMacro("Input dataSet is a multiblock dataset with not exactly one block ! Use "
+      RosetteCIHEmitThrow("Input dataSet is a multiblock dataset with not exactly one block ! Use "
                     "MergeBlocks or ExtractBlocks filter before calling this filter !");
       return;
     }
     vtkDataObject* input2(input1->GetBlock(0));
     if (!input2)
     {
-      vtkErrorMacro("Input dataSet is a multiblock dataset with exactly one block but this single "
+      RosetteCIHEmitThrow("Input dataSet is a multiblock dataset with exactly one block but this single "
                     "element is NULL !");
       return;
     }
     vtkDataSet* input2c(vtkDataSet::SafeDownCast(input2));
     if (!input2c)
     {
-      vtkErrorMacro(
+      RosetteCIHEmitThrow(
         "Input dataSet is a multiblock dataset with exactly one block but this single element is "
         "not a dataset ! Use MergeBlocks or ExtractBlocks filter before calling this filter !");
       return;
@@ -89,7 +105,7 @@ void vtkRosetteCIH::ExtractInfo(
 
   if (!input)
   {
-    vtkErrorMacro("Input data set is NULL !");
+    RosetteCIHEmitThrow("Input data set is NULL !");
     return;
   }
 
@@ -226,7 +242,7 @@ int vtkRosetteCIH::ComponentIdOfArray(vtkAbstractArray* array, const std::string
     {
       if (ret != -1)
       {
-        vtkErrorMacro("ComponentIdOfArray : already found !");
+        RosetteCIHEmitThrow("ComponentIdOfArray : already found !");
         return ret;
       }
       ret = i;
@@ -234,7 +250,7 @@ int vtkRosetteCIH::ComponentIdOfArray(vtkAbstractArray* array, const std::string
   }
   if (ret == -1)
   {
-    vtkErrorMacro(
+    RosetteCIHEmitThrow(
       "ComponentIdOfArray : component " << compoName << " in array " << array->GetName() << " !");
   }
   return ret;
@@ -322,7 +338,7 @@ std::string vtkRosetteCIH::GetFieldName(vtkUnstructuredGrid* usgInCpy, const cha
     {
       if (found)
       {
-        vtkErrorMacro("GetFieldName : already found !");
+        RosetteCIHEmitThrow("GetFieldName : already found !");
       }
       arrayNameOK = arrayName;
       found = true;
@@ -330,7 +346,7 @@ std::string vtkRosetteCIH::GetFieldName(vtkUnstructuredGrid* usgInCpy, const cha
   }
   if (!found)
   {
-    vtkErrorMacro("GetFieldName : Impossible to find a valid array !");
+    RosetteCIHEmitThrow("GetFieldName : Impossible to find a valid array !");
   }
   return arrayNameOK;
 }
@@ -514,20 +530,28 @@ int vtkRosetteCIH::RequestData(vtkInformation* vtkNotUsed(request),
     vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT())));
   //
   vtkSmartPointer<vtkUnstructuredGrid> usgIn;
-  this->ExtractInfo(inputVector[0], usgIn);
-  switch (this->TypeOfDisplay)
+  try
   {
-    case 0:
-      this->PostTraitementT1etT2(usgIn, output);
-      break;
-    case 1:
-      this->PostTraitementT1(usgIn, output);
-      break;
-    case 2:
-      this->PostTraitementT2(usgIn, output);
-      break;
-    default:
-      vtkErrorMacro("GetFieldName : Impossible to find a valid array !");
+    this->ExtractInfo(inputVector[0], usgIn);
+    switch (this->TypeOfDisplay)
+    {
+      case 0:
+        this->PostTraitementT1etT2(usgIn, output);
+        break;
+      case 1:
+        this->PostTraitementT1(usgIn, output);
+        break;
+      case 2:
+        this->PostTraitementT2(usgIn, output);
+        break;
+      default:
+        RosetteCIHEmitThrow("GetFieldName : Impossible to find a valid array !");
+    }
+  }
+  catch(const std::exception& e)
+  {
+    std::cerr << "vtkRosetteCIH::RequestData : " << e.what() << std::endl;
+    return 0;
   }
 
   return 1;
