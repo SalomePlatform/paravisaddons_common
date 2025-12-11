@@ -43,8 +43,9 @@
 #include <vtkVariantArray.h>
 #include <vtkWarpVector.h>
 
-#include <stdexcept>
+#include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 void RosetteCIHEmitThrowInternal(const std::string& msg)
 {

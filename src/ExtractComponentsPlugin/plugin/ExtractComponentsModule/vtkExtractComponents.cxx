@@ -42,6 +42,9 @@
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
+
+#include <iostream>
+
 #ifdef WIN32
  #define NOMINMAX
  #include <algorithm>

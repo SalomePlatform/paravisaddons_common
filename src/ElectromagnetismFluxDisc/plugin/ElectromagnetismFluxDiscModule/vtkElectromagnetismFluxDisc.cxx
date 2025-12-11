@@ -72,10 +72,11 @@
 #endif
 #include <math.h>
 
-#include <map>
-#include <deque>
-#include <sstream>
 #include <algorithm>
+#include <deque>
+#include <iostream>
+#include <map>
+#include <sstream>
 
 vtkStandardNewMacro(vtkElectromagnetismFluxDisc);
 
