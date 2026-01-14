@@ -84,7 +84,7 @@ using MEDCoupling::ON_GAUSS_PT;
 vtkStandardNewMacro(vtkTorseurCIH);
 ///////////////////
 
-std::map<int, int> ComputeMapOfType()
+static std::map<int, int> ComputeMapOfType()
 {
   std::map<int, int> ret;
   int nbOfTypesInMC(sizeof(MEDCOUPLING2VTKTYPETRADUCER) / sizeof(int));
@@ -97,7 +97,7 @@ std::map<int, int> ComputeMapOfType()
   return ret;
 }
 
-std::map<int, int> ComputeRevMapOfType()
+static std::map<int, int> ComputeRevMapOfType()
 {
   std::map<int, int> ret;
   int nbOfTypesInMC(sizeof(MEDCOUPLING2VTKTYPETRADUCER) / sizeof(int));
@@ -112,7 +112,7 @@ std::map<int, int> ComputeRevMapOfType()
 
 ///////////////////
 
-void ExtractInfo(vtkInformationVector* inputVector, vtkSmartPointer<vtkUnstructuredGrid>& usgIn)
+static void ExtractInfo(vtkInformationVector* inputVector, vtkSmartPointer<vtkUnstructuredGrid>& usgIn)
 {
   vtkInformation* inputInfo(inputVector->GetInformationObject(0));
   vtkDataSet* input = nullptr;
@@ -172,7 +172,7 @@ void ExtractInfo(vtkInformationVector* inputVector, vtkSmartPointer<vtkUnstructu
     usgIn->Register(nullptr);
 }
 
-MEDCoupling::DataArrayInt* ConvertVTKArrayToMCArrayInt(vtkDataArray* data)
+static MEDCoupling::DataArrayInt* ConvertVTKArrayToMCArrayInt(vtkDataArray* data)
 {
   if (!data)
     throw INTERP_KERNEL::Exception("ConvertVTKArrayToMCArrayInt : internal error !");
@@ -214,7 +214,7 @@ MEDCoupling::DataArrayInt* ConvertVTKArrayToMCArrayInt(vtkDataArray* data)
   throw INTERP_KERNEL::Exception(oss.str());
 }
 
-vtkSmartPointer<vtkDoubleArray> ConvertMCArrayToVTKArray(MEDCoupling::DataArrayDouble *data)
+static vtkSmartPointer<vtkDoubleArray> ConvertMCArrayToVTKArray(MEDCoupling::DataArrayDouble *data)
 {
   if (!data)
     throw INTERP_KERNEL::Exception("ConvertMCArrayToVTKArray : internal error !");
@@ -225,7 +225,7 @@ vtkSmartPointer<vtkDoubleArray> ConvertMCArrayToVTKArray(MEDCoupling::DataArrayD
   return ret;
 }
 
-MEDCoupling::DataArrayDouble* ConvertVTKArrayToMCArrayDouble(vtkDataArray* data)
+static MEDCoupling::DataArrayDouble* ConvertVTKArrayToMCArrayDouble(vtkDataArray* data)
 {
   if (!data)
     throw INTERP_KERNEL::Exception("ConvertVTKArrayToMCArrayDouble : internal error !");
@@ -261,7 +261,7 @@ MEDCoupling::DataArrayDouble* ConvertVTKArrayToMCArrayDouble(vtkDataArray* data)
   throw INTERP_KERNEL::Exception(oss.str());
 }
 
-MEDCoupling::DataArray* ConvertVTKArrayToMCArray(vtkDataArray* data)
+static MEDCoupling::DataArray* ConvertVTKArrayToMCArray(vtkDataArray* data)
 {
   if (!data)
     throw INTERP_KERNEL::Exception("ConvertVTKArrayToMCArray : internal error !");
@@ -278,7 +278,7 @@ MEDCoupling::DataArray* ConvertVTKArrayToMCArray(vtkDataArray* data)
   throw INTERP_KERNEL::Exception(oss.str());
 }
 
-MEDCoupling::DataArrayDouble* BuildCoordsFrom(vtkPointSet* ds)
+static MEDCoupling::DataArrayDouble* BuildCoordsFrom(vtkPointSet* ds)
 {
   if (!ds)
     throw INTERP_KERNEL::Exception("BuildCoordsFrom : internal error !");
@@ -292,7 +292,7 @@ MEDCoupling::DataArrayDouble* BuildCoordsFrom(vtkPointSet* ds)
   return coords.retn();
 }
 
-vtkSmartPointer<vtkUnstructuredGrid> BuildFromPtCloud(MEDCoupling::DataArrayDouble *pts)
+static vtkSmartPointer<vtkUnstructuredGrid> BuildFromPtCloud(MEDCoupling::DataArrayDouble *pts)
 {
   vtkSmartPointer<vtkUnstructuredGrid> ret(vtkSmartPointer<vtkUnstructuredGrid>::New());
   mcIdType nbPt(pts->getNumberOfTuples());
@@ -326,7 +326,7 @@ vtkSmartPointer<vtkUnstructuredGrid> BuildFromPtCloud(MEDCoupling::DataArrayDoub
   return ret;
 }
 
-vtkSmartPointer<vtkUnstructuredGrid> BuildPart(vtkUnstructuredGrid *ds, const mcIdType *beginPtr, const mcIdType *endPtr)
+static vtkSmartPointer<vtkUnstructuredGrid> BuildPart(vtkUnstructuredGrid *ds, const mcIdType *beginPtr, const mcIdType *endPtr)
 {
   constexpr char INOUT_NAME[]="InOutPPP";
   vtkSmartPointer<vtkUnstructuredGrid> ret,dsCpy(vtkSmartPointer<vtkUnstructuredGrid>::New());
@@ -351,7 +351,7 @@ vtkSmartPointer<vtkUnstructuredGrid> BuildPart(vtkUnstructuredGrid *ds, const mc
   return ret;
 }
 
-void ConvertFromUnstructuredGrid(vtkUnstructuredGrid* ds,
+static void ConvertFromUnstructuredGrid(vtkUnstructuredGrid* ds,
   std::vector<MCAuto<MEDCouplingUMesh> >& ms, std::vector<MCAuto<MEDCoupling::DataArrayIdType> >& ids)
 {
   MCAuto<MEDCoupling::DataArrayDouble> coords(BuildCoordsFrom(ds));
@@ -430,7 +430,7 @@ void ConvertFromUnstructuredGrid(vtkUnstructuredGrid* ds,
   }
 }
 
-vtkSmartPointer<vtkUnstructuredGrid> ConvertUMeshFromMCToVTK(const MEDCouplingUMesh* mVor)
+static vtkSmartPointer<vtkUnstructuredGrid> ConvertUMeshFromMCToVTK(const MEDCouplingUMesh* mVor)
 {
   std::map<int, int> zeMapRev(ComputeRevMapOfType());
   int nbCells(mVor->getNumberOfCells());
@@ -609,7 +609,7 @@ vtkSmartPointer<vtkUnstructuredGrid> ConvertUMeshFromMCToVTK(const MEDCouplingUM
   return ret;
 }
 
-MCAuto<MEDCoupling::DataArrayDouble> ForceBuilder(const std::vector<std::size_t>& TAB, const MEDCoupling::DataArrayDouble* matrix, const MEDCoupling::DataArrayDouble* eqn)
+static MCAuto<MEDCoupling::DataArrayDouble> ForceBuilder(const std::vector<std::size_t>& TAB, const MEDCoupling::DataArrayDouble* matrix, const MEDCoupling::DataArrayDouble* eqn)
 {
   MCAuto<MEDCoupling::DataArrayDouble> tmp0, tmp1, ret;
   tmp0 = matrix->keepSelectedComponents({ TAB[0] });
@@ -626,7 +626,7 @@ MCAuto<MEDCoupling::DataArrayDouble> ForceBuilder(const std::vector<std::size_t>
   return ret;
 }
 
-double ReturnInertia(
+static double ReturnInertia(
   const double pOut[3], const MEDCoupling::DataArrayDouble* OM, const MEDCoupling::DataArrayDouble* area_field_ids)
 {
   MCAuto<MEDCoupling::DataArrayDouble> base_X(MEDCoupling::DataArrayDouble::New());
@@ -651,7 +651,7 @@ double ReturnInertia(
   return inertiaTmp;
 }
 
-void FindPrincipalAxeInternal(const double startVector[3], const double normalFace[3],
+static void FindPrincipalAxeInternal(const double startVector[3], const double normalFace[3],
   const MEDCoupling::DataArrayDouble* OM, const MEDCoupling::DataArrayDouble* area_field_ids,
   const std::vector<double>& posToIterate, double& angleDegree, double outputAxis[3],
   double& inertia)
@@ -672,7 +672,7 @@ void FindPrincipalAxeInternal(const double startVector[3], const double normalFa
   }
 }
 
-void FindPrincipalAxe(const double startVector[3], const double normalFace[3],
+static void FindPrincipalAxe(const double startVector[3], const double normalFace[3],
   const MEDCoupling::DataArrayDouble* OM, const MEDCoupling::DataArrayDouble* area_field_ids, double& angleDegree,
   double outputAxis[3], double& inertia)
 {
@@ -690,7 +690,7 @@ void FindPrincipalAxe(const double startVector[3], const double normalFace[3],
   }
 }
 
-vtkSmartPointer<vtkTable> ComputeTorseurCIH(vtkUnstructuredGrid* usgIn, vtkSmartPointer<vtkUnstructuredGrid> &ugLev0,
+static vtkSmartPointer<vtkTable> ComputeTorseurCIH(vtkUnstructuredGrid* usgIn, vtkSmartPointer<vtkUnstructuredGrid> &ugLev0,
 vtkSmartPointer< vtkUnstructuredGrid >& baryVTK)
 {
   std::vector<MCAuto<MEDCouplingUMesh> > m;
