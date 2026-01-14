@@ -77,7 +77,7 @@ static vtkInformationDataObjectMetaDataKey* GetMEDReaderMetaDataIfAny()
   return reinterpret_cast<vtkInformationDataObjectMetaDataKey*>(pt);
 }
 
-bool IsInformationOK(vtkInformation* info)
+static bool IsInformationOK(vtkInformation* info)
 {
   vtkInformationDataObjectMetaDataKey* key(GetMEDReaderMetaDataIfAny());
   if (!key)
@@ -139,7 +139,7 @@ private:
   int _id;
 };
 
-void ExtractInfo(vtkInformationVector* inputVector, vtkUnstructuredGrid*& usgIn)
+static void ExtractInfo(vtkInformationVector* inputVector, vtkUnstructuredGrid*& usgIn)
 {
   vtkInformation* inputInfo(inputVector->GetInformationObject(0));
   vtkDataSet* input(0);
@@ -176,7 +176,7 @@ void ExtractInfo(vtkInformationVector* inputVector, vtkUnstructuredGrid*& usgIn)
                                    "only on unstructured meshes !");
 }
 
-void LoadFamGrpMapInfo(vtkMutableDirectedGraph* sil, std::string& meshName,
+static void LoadFamGrpMapInfo(vtkMutableDirectedGraph* sil, std::string& meshName,
   std::vector<Grp>& groups, std::vector<Fam>& fams)
 {
   if (!sil)
@@ -243,7 +243,7 @@ void LoadFamGrpMapInfo(vtkMutableDirectedGraph* sil, std::string& meshName,
   it0->Delete();
 }
 
-std::vector<std::string> FindConds(const std::vector<Grp>& grps)
+static std::vector<std::string> FindConds(const std::vector<Grp>& grps)
 {
   constexpr char PAT[] = "COND_";
   constexpr std::size_t SZ_PAT(sizeof(PAT) - 1);
@@ -260,7 +260,7 @@ std::vector<std::string> FindConds(const std::vector<Grp>& grps)
 
 constexpr char EPORT_PAT[] = "EPORT_";
 
-std::vector<std::string> FindEports(
+static std::vector<std::string> FindEports(
   const std::string& condEntry, const std::vector<Grp>& grps, std::vector<std::string>& eportsZip)
 {
   std::vector<std::string> ret;
@@ -279,7 +279,7 @@ std::vector<std::string> FindEports(
   return ret;
 }
 
-std::string BigestCommonPart(const std::string& s1, const std::string& s2)
+static std::string BigestCommonPart(const std::string& s1, const std::string& s2)
 {
   std::size_t ls1(s1.length()), ls2(s2.length()), lb(0), lt(0);
   std::string b, t;
@@ -309,7 +309,7 @@ std::string BigestCommonPart(const std::string& s1, const std::string& s2)
   return std::string();
 }
 
-std::vector<int> DeduceIdsFrom(const std::vector<std::string>& eportsZip)
+static std::vector<int> DeduceIdsFrom(const std::vector<std::string>& eportsZip)
 {
   if (eportsZip.empty())
     return std::vector<int>();
@@ -333,7 +333,7 @@ std::vector<int> DeduceIdsFrom(const std::vector<std::string>& eportsZip)
   return ret;
 }
 
-std::set<int> FamiliesIdsFromGrp(
+static std::set<int> FamiliesIdsFromGrp(
   const std::vector<Grp>& grps, const std::vector<Fam>& fams, const std::string& grp)
 {
   bool found(false);
@@ -358,7 +358,7 @@ std::set<int> FamiliesIdsFromGrp(
   return ret;
 }
 
-vtkDataSet* FilterFamilies(vtkZJFilter* zeBoss, vtkDataSet* input, const std::set<int>& idsToKeep)
+static vtkDataSet* FilterFamilies(vtkZJFilter* zeBoss, vtkDataSet* input, const std::set<int>& idsToKeep)
 {
   bool catchAll, catchSmth;
   vtkNew<vtkThreshold> thres;

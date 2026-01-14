@@ -154,7 +154,7 @@ int vtkExtractThreeD::RequestInformation(vtkInformation *request, vtkInformation
   return 1;
 }
 
-vtkDataSet *FilterFamilies(vtkDataSet *input, const std::vector<int> &idsToKeep)
+static vtkDataSet *FilterFamilies(vtkDataSet *input, const std::vector<int> &idsToKeep)
 {
   const int VTK_DATA_ARRAY_DELETE = vtkAOSDataArrayTemplate<double>::VTK_DATA_ARRAY_DELETE;
   const char ZE_SELECTION_ARR_NAME[] = "@@ZeSelection@@";

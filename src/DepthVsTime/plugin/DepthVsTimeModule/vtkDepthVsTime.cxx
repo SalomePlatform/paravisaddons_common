@@ -133,7 +133,7 @@ private:
   vtkSmartPointer<vtkPolyData> _ladder;
 };
 
-void ExtractInfo(vtkInformationVector *inputVector, vtkUnstructuredGrid *&usgIn)
+static void ExtractInfo(vtkInformationVector *inputVector, vtkUnstructuredGrid *&usgIn)
 {
   vtkInformation *inputInfo(inputVector->GetInformationObject(0));
   vtkDataSet *input(0);
