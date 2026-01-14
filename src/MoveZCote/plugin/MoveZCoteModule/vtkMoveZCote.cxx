@@ -72,7 +72,7 @@ private:
   std::string _reason;
 };
 
-void ExtractInfo(vtkInformationVector *inputVector, vtkUnstructuredGrid *&usgIn, vtkDoubleArray *&arr)
+static void ExtractInfo(vtkInformationVector *inputVector, vtkUnstructuredGrid *&usgIn, vtkDoubleArray *&arr)
 {
   vtkInformation *inputInfo(inputVector->GetInformationObject(0));
   vtkDataSet *input(0);

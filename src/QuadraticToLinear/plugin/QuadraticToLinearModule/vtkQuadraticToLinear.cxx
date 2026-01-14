@@ -120,7 +120,7 @@ private:
   std::string _reason;
 };
 
-void ExtractInfo(vtkInformationVector *inputVector, vtkUnstructuredGrid *&usgIn)
+static void ExtractInfo(vtkInformationVector *inputVector, vtkUnstructuredGrid *&usgIn)
 {
   vtkInformation *inputInfo(inputVector->GetInformationObject(0));
   vtkDataSet *input(0);
@@ -150,7 +150,7 @@ void ExtractInfo(vtkInformationVector *inputVector, vtkUnstructuredGrid *&usgIn)
 }
 
 template<class VTKArrayType>
-vtkSmartPointer<vtkDataArray> ReduceArray( vtkDataArray * arrIn, int newNbPts, const int *new2Old )
+static vtkSmartPointer<vtkDataArray> ReduceArray( vtkDataArray * arrIn, int newNbPts, const int *new2Old )
 {
   vtkIdType nbOfCompo(arrIn->GetNumberOfComponents());
   vtkSmartPointer<VTKArrayType> ret(vtkSmartPointer<VTKArrayType>::New());
@@ -174,7 +174,7 @@ vtkSmartPointer<vtkDataArray> ReduceArray( vtkDataArray * arrIn, int newNbPts, c
   return zeRet;
 }
 
-vtkSmartPointer<vtkDataArray> Reduce(const int *new2Old, int newNbPts, vtkDataArray *array)
+static vtkSmartPointer<vtkDataArray> Reduce(const int *new2Old, int newNbPts, vtkDataArray *array)
 {
   if (!array)
     throw MZCException("Reduce : null input vector !");
@@ -214,7 +214,7 @@ vtkSmartPointer<vtkDataArray> Reduce(const int *new2Old, int newNbPts, vtkDataAr
   return zeRet;
 }
 
-vtkSmartPointer<vtkUnstructuredGrid> ComputeQuadToLinear(vtkUnstructuredGrid *usg)
+static vtkSmartPointer<vtkUnstructuredGrid> ComputeQuadToLinear(vtkUnstructuredGrid *usg)
 {
   std::map<VTKCellType, VTKCellType> linToQuad;
   std::map<VTKCellType, vtkIdType> nbNodesPerType;

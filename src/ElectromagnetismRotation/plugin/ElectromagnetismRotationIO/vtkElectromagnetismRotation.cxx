@@ -103,7 +103,7 @@ static vtkInformationDataObjectMetaDataKey* GetMEDReaderMetaDataIfAny()
   return reinterpret_cast<vtkInformationDataObjectMetaDataKey*>(pt);
 }
 
-bool IsInformationOK(vtkInformation* info)
+static bool IsInformationOK(vtkInformation* info)
 {
   vtkInformationDataObjectMetaDataKey* key(GetMEDReaderMetaDataIfAny());
   if (!key)
@@ -206,7 +206,7 @@ void vtkElectromagnetismRotation::SetSIL(vtkMutableDirectedGraph *mdg)
 }
 
 template<class CellPointExtractor>
-vtkDataSet *FilterFamilies(vtkThreshold *thres,
+static vtkDataSet *FilterFamilies(vtkThreshold *thres,
                            vtkDataSet *input, const std::set<int>& idsToKeep, bool insideOut, const char *arrNameOfFamilyField,
                            const char *associationForThreshold, bool& catchAll, bool& catchSmth)
 {

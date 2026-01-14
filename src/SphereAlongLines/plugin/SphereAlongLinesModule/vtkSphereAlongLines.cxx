@@ -81,7 +81,7 @@ private:
   std::string _reason;
 };
 
-void ExtractInfo(vtkInformationVector* inputVector, vtkPolyData*& usgIn)
+static void ExtractInfo(vtkInformationVector* inputVector, vtkPolyData*& usgIn)
 {
   vtkInformation* inputInfo(inputVector->GetInformationObject(0));
   vtkDataSet* input(0);
@@ -118,7 +118,7 @@ void ExtractInfo(vtkInformationVector* inputVector, vtkPolyData*& usgIn)
   usgIn = zeInput;
 }
 
-vtkDataArray* GetCoords(vtkPointSet* ds)
+static vtkDataArray* GetCoords(vtkPointSet* ds)
 {
   vtkPoints* pts(ds->GetPoints());
   if (!pts)
@@ -131,7 +131,7 @@ vtkDataArray* GetCoords(vtkPointSet* ds)
   return data;
 }
 
-vtkDoubleArray* GetIntegrationTime(vtkPointSet* ds)
+static vtkDoubleArray* GetIntegrationTime(vtkPointSet* ds)
 {
   vtkDataSetAttributes* dsa(ds->GetPointData());
   if (!dsa)
@@ -164,7 +164,7 @@ vtkDoubleArray* GetIntegrationTime(vtkPointSet* ds)
 }
 
 template <class T>
-void RearrangeIfNecessaryImpl(typename VTKTraits<T>::VtkType* coords, vtkDoubleArray* intTime,
+static void RearrangeIfNecessaryImpl(typename VTKTraits<T>::VtkType* coords, vtkDoubleArray* intTime,
   std::vector<std::vector<vtkIdType> >& connect, double eps)
 {
   std::size_t nbCells(connect.size());
@@ -199,7 +199,7 @@ void RearrangeIfNecessaryImpl(typename VTKTraits<T>::VtkType* coords, vtkDoubleA
   connect = connectOut;
 }
 
-void RearrangeIfNecessary(vtkDataArray* coords, vtkDoubleArray* intTime,
+static void RearrangeIfNecessary(vtkDataArray* coords, vtkDoubleArray* intTime,
   std::vector<std::vector<vtkIdType> >& connect, double eps)
 {
   vtkFloatArray* c0(vtkFloatArray::SafeDownCast(coords));
