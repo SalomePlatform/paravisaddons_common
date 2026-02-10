@@ -15,5 +15,8 @@ testmed.TimesFlagsStatus = ['0000']
 zJFilter1 = ZJFilter(registrationName='ZJFilter1', Input=testmed)
 zJFilter1.UpdatePipeline()
 cdi = zJFilter1.GetCellDataInformation()
-MyAssert(cdi.GetNumberOfArrays() == 5)
+ref_set = {'FamilyIdCell', 'NumIdCell', 'BT1Cond01', 'pertes_Ohm'}
+set_to_test = set( [cdi.GetArray(i).GetName() for i in range( cdi.GetNumberOfArrays()  ) ] )
+print( set_to_test )
+MyAssert(ref_set <= set_to_test)
 print("OK")
