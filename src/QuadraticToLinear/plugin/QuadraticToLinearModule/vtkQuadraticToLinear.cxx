@@ -33,6 +33,9 @@
 #include <vtkDemandDrivenPipeline.h>
 #include <vtkDoubleArray.h>
 #include <vtkLongArray.h>
+#if defined(__APPLE__)
+#include <vtkLongLongArray.h>
+#endif
 #include <vtkExecutive.h>
 #include <vtkFloatArray.h>
 #include <vtkInEdgeIterator.h>
@@ -196,6 +199,13 @@ static vtkSmartPointer<vtkDataArray> Reduce(const int *new2Old, int newNbPts, vt
   {
     zeRet = ReduceArray<vtkLongArray>( array, newNbPts, new2Old );
   }
+#if defined(__APPLE__)
+  // macOS: mcIdType (std::int64_t == long long) fields come as vtkLongLongArray
+  else if (vtkLongLongArray::SafeDownCast(array))
+  {
+    zeRet = ReduceArray<vtkLongLongArray>( array, newNbPts, new2Old );
+  }
+#endif
   else if (vtkIntArray::SafeDownCast(array))
   {
     zeRet = ReduceArray<vtkIntArray>( array, newNbPts, new2Old );

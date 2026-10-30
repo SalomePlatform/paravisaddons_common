@@ -48,6 +48,9 @@
 #include <vtkInformationStringKey.h>
 #include <vtkInformationVector.h>
 #include <vtkLongArray.h>
+#if defined(__APPLE__)
+#include <vtkLongLongArray.h> // mcIdType (std::int64_t == long long) fields on macOS
+#endif
 #include <vtkUnsignedCharArray.h>
 #include <vtkMultiBlockDataGroupFilter.h>
 #include <vtkMultiBlockDataSet.h>
@@ -208,6 +211,16 @@ static MEDCoupling::DataArrayInt* ConvertVTKArrayToMCArrayInt(vtkDataArray* data
     std::copy(pt, pt + nbElts, ptOut);
     return ret.retn();
   }
+#if defined(__APPLE__)
+  // macOS: the MED reader stores mcIdType (std::int64_t == long long) fields in vtkLongLongArray
+  vtkLongLongArray* d3(vtkLongLongArray::SafeDownCast(data));
+  if (d3)
+  {
+    const long long* pt(d3->GetPointer(0));
+    std::copy(pt, pt + nbElts, ptOut);
+    return ret.retn();
+  }
+#endif
   std::ostringstream oss;
   oss << "ConvertVTKArrayToMCArrayInt : unrecognized array \"" << typeid(*data).name()
       << "\" type !";
@@ -273,6 +286,10 @@ static MEDCoupling::DataArray* ConvertVTKArrayToMCArray(vtkDataArray* data)
   vtkLongArray* d3(vtkLongArray::SafeDownCast(data));
   if (d2 || d3)
     return ConvertVTKArrayToMCArrayInt(data);
+#if defined(__APPLE__)
+  if (vtkLongLongArray::SafeDownCast(data))
+    return ConvertVTKArrayToMCArrayInt(data);
+#endif
   std::ostringstream oss;
   oss << "ConvertVTKArrayToMCArray : unrecognized array \"" << typeid(*data).name() << "\" type !";
   throw INTERP_KERNEL::Exception(oss.str());

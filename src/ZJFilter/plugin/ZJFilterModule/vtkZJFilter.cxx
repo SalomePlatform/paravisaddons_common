@@ -43,6 +43,9 @@
 #include <vtkInformationStringKey.h>
 #include <vtkInformationVector.h>
 #include <vtkLongArray.h>
+#if defined(__APPLE__)
+#include <vtkLongLongArray.h>
+#endif
 #include <vtkMultiBlockDataSet.h>
 #include <vtkMutableDirectedGraph.h>
 #include <vtkObjectFactory.h>
@@ -382,7 +385,12 @@ static vtkDataSet* FilterFamilies(vtkZJFilter* zeBoss, vtkDataSet* input, const 
   if (!da)
     return 0;
   std::string daName(da->GetName());
+#if defined(__APPLE__)
+  // macOS: the MED reader stores mcIdType (std::int64_t == long long) fields in vtkLongLongArray
+  vtkLongLongArray* dai(vtkLongLongArray::SafeDownCast(da));
+#else
   vtkLongArray* dai(vtkLongArray::SafeDownCast(da));
+#endif
   if (daName != arrNameOfFamilyField || !dai)
     return 0;
   //
@@ -392,7 +400,11 @@ static vtkDataSet* FilterFamilies(vtkZJFilter* zeBoss, vtkDataSet* input, const 
   zeSelection->SetNumberOfComponents(1);
   char* pt(new char[nbOfTuples]);
   zeSelection->SetArray(pt, nbOfTuples, 0, VTK_DATA_ARRAY_DELETE);
+#if defined(__APPLE__)
+  const long long* inPtr(dai->GetPointer(0));
+#else
   const long* inPtr(dai->GetPointer(0));
+#endif
   std::fill(pt, pt + nbOfTuples, 0);
   catchAll = true;
   catchSmth = false;
